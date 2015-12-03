@@ -1,0 +1,3 @@
+LastGame=testsave1.txt
+TickRate=1000
+MaxMinions=5
