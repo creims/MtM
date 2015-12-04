@@ -16,7 +16,7 @@ public class DiceRandomizer {
     
     private static final int DECIMAL_PLACES = 2;
 
-    public DiceRandomizer(double min, double max, double increment, int numDice) {
+    public DiceRandomizer(double min, double max, int numDice) {
         this.diceMin = min;
         this.diceMax = max;
         this.numDice = numDice;
