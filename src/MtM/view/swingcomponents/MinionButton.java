@@ -51,6 +51,7 @@ public class MinionButton extends JPanel implements MouseListener {
     private void initComponents() {
 
         setBackground(new java.awt.Color(0, 255, 255));
+        setMaximumSize(new java.awt.Dimension(10000, 100000));
         setMinimumSize(new java.awt.Dimension(50, 50));
         setPreferredSize(new java.awt.Dimension(50, 50));
         setLayout(new org.netbeans.lib.awtextra.AbsoluteLayout());

@@ -120,6 +120,7 @@ public class MtMGUI extends javax.swing.JFrame {
     // <editor-fold defaultstate="collapsed" desc="Generated Code">//GEN-BEGIN:initComponents
     private void initComponents() {
 
+        minionPane1 = new MtM.view.swingcomponents.MinionPane();
         jScrollPane1 = new javax.swing.JScrollPane();
         log = new javax.swing.JTextArea();
         minionPane = new MtM.view.swingcomponents.MinionPane();
@@ -208,7 +209,7 @@ public class MtMGUI extends javax.swing.JFrame {
                 .addContainerGap()
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                     .addGroup(layout.createSequentialGroup()
-                        .addComponent(minionPane, javax.swing.GroupLayout.PREFERRED_SIZE, 113, javax.swing.GroupLayout.PREFERRED_SIZE)
+                        .addComponent(minionPane, javax.swing.GroupLayout.PREFERRED_SIZE, 143, javax.swing.GroupLayout.PREFERRED_SIZE)
                         .addGap(0, 0, Short.MAX_VALUE))
                     .addComponent(jScrollPane1, javax.swing.GroupLayout.DEFAULT_SIZE, 780, Short.MAX_VALUE))
                 .addContainerGap())
@@ -306,6 +307,7 @@ public class MtMGUI extends javax.swing.JFrame {
     private javax.swing.JTextArea log;
     private javax.swing.JMenuBar menuBar;
     private MtM.view.swingcomponents.MinionPane minionPane;
+    private MtM.view.swingcomponents.MinionPane minionPane1;
     // End of variables declaration//GEN-END:variables
 
 }

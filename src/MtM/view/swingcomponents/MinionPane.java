@@ -5,8 +5,15 @@
  */
 package MtM.view.swingcomponents;
 
-import java.awt.Graphics;
+import java.awt.BorderLayout;
+import java.awt.Dimension;
+import java.awt.Rectangle;
+import javax.swing.BoxLayout;
+import javax.swing.JScrollBar;
 import javax.swing.JScrollPane;
+import javax.swing.JViewport;
+import javax.swing.ScrollPaneLayout;
+import javax.swing.SwingUtilities;
 
 /**
  *
@@ -22,10 +29,9 @@ public class MinionPane extends JScrollPane {
      */
     public MinionPane() {
         initComponents();
-        btnArray = new MinionButton[5];
+        btnArray = new MinionButton[20];
+
         index = 0;
-        setViewportView(viewPanel);
-        viewPanel.setLayout(null);
     }
 
     public void addMinionBtn() {
@@ -34,17 +40,38 @@ public class MinionPane extends JScrollPane {
         newBtn.setSize(size, size);
         newBtn.setLocation(10, 10 + index * (size + 10));
         newBtn.setBtnID(index);
+        viewPanel.setPreferredSize(new Dimension(size, 20 + (size + 10) * (index + 1)));
         btnArray[index] = newBtn;
         index++;
         viewPanel.add(newBtn);
+        viewPanel.revalidate();
         newBtn.setMinionPane(this);
+        revalidate();
+        repaint();
         newBtn.processPress();
+
+        updateUI();
+        scrollToBottom();
     }
-    
+
+    public void scrollToBottom() {
+        JScrollBar vertical = this.getVerticalScrollBar();
+        SwingUtilities.invokeLater(new Runnable() {
+            @Override
+            public void run() {
+                vertical.setValue(vertical.getMaximum());
+            }
+
+        });
+
+    }
+
     public void processSelection(int id) {
         selected = id;
         for (int i = 0; i < index; i++) {
-            if(btnArray[i] == null || i == selected) continue;
+            if (btnArray[i] == null || i == selected) {
+                continue;
+            }
             btnArray[i].setSelected(false);
         }
     }
@@ -61,8 +88,23 @@ public class MinionPane extends JScrollPane {
         viewPanel = new javax.swing.JPanel();
 
         setHorizontalScrollBarPolicy(javax.swing.ScrollPaneConstants.HORIZONTAL_SCROLLBAR_NEVER);
+        setVerticalScrollBarPolicy(javax.swing.ScrollPaneConstants.VERTICAL_SCROLLBAR_ALWAYS);
         setViewportBorder(javax.swing.BorderFactory.createEtchedBorder());
         setPreferredSize(new java.awt.Dimension(60, 400));
+
+        viewPanel.setPreferredSize(new java.awt.Dimension(60, 400));
+
+        javax.swing.GroupLayout viewPanelLayout = new javax.swing.GroupLayout(viewPanel);
+        viewPanel.setLayout(viewPanelLayout);
+        viewPanelLayout.setHorizontalGroup(
+            viewPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGap(0, 126, Short.MAX_VALUE)
+        );
+        viewPanelLayout.setVerticalGroup(
+            viewPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGap(0, 494, Short.MAX_VALUE)
+        );
+
         setViewportView(viewPanel);
     }// </editor-fold>//GEN-END:initComponents
 
