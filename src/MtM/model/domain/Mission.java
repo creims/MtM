@@ -4,23 +4,33 @@ package MtM.model.domain;
  *
  * @author Colin
  */
-class Mission {
+public class Mission {
+
+    private final MissionType type;
 
     private int timeRequired;
     private int currentTime;
     private int completionRate;
 
     private boolean done;
+    private boolean active;
 
-    public Mission(int timeRequired, int completionRate) {
+    private Stat primaryStat;
+    private Stat secondaryStat;
+
+    private double reward;
+
+    public Mission(MissionType type, int timeRequired, int completionRate) {
+        this.type = type;
         this.timeRequired = timeRequired;
-        this.currentTime = 0;
         this.completionRate = completionRate;
+        this.currentTime = 0;
         this.done = false;
+        this.active = false;
     }
 
     /**
-     * 
+     *
      * @return true iff the mission is done
      */
     public boolean update() {
@@ -108,4 +118,59 @@ class Mission {
         this.timeRequired = timeRequired;
     }
 
+    /**
+     * Get the value of active
+     *
+     * @return the value of active
+     */
+    public boolean isActive() {
+        return active;
+    }
+
+    /**
+     * Set the value of active
+     *
+     * @param active new value of active
+     */
+    public void setActive(boolean active) {
+        this.active = active;
+    }
+
+    public MissionType getType() {
+        return type;
+    }
+
+    public Stat getPrimaryStat() {
+        return primaryStat;
+    }
+
+    public void setPrimaryStat(Stat primaryStat) {
+        this.primaryStat = primaryStat;
+    }
+
+    public Stat getSecondaryStat() {
+        return secondaryStat;
+    }
+
+    public void setSecondaryStat(Stat secondaryStat) {
+        this.secondaryStat = secondaryStat;
+    }
+
+    /**
+     * Get the value of reward
+     *
+     * @return the value of reward
+     */
+    public double getReward() {
+        return reward;
+    }
+
+    /**
+     * Set the value of reward
+     *
+     * @param reward new value of reward
+     */
+    public void setReward(double reward) {
+        this.reward = reward;
+    }
 }

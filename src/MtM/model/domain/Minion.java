@@ -12,18 +12,19 @@ import java.util.concurrent.ThreadLocalRandom;
  * @author Colin
  */
 public class Minion {
+    private static final double STAT_MIN = 1, STAT_MAX = 6;
 
     private String name;
     private Mission mission;
 
     private double perception, tech, gathering, fighting;
 
-    public Minion(DiceRandomizer randomizer) {
+    public Minion() {
         this.name = randomName();
-        this.perception = randomizer.nextVal();
-        this.tech = randomizer.nextVal();
-        this.gathering = randomizer.nextVal();
-        this.fighting = randomizer.nextVal();
+        this.perception = DiceRandomizer.nextVal(STAT_MIN, STAT_MAX, 3);
+        this.tech = DiceRandomizer.nextVal(STAT_MIN, STAT_MAX, 3);
+        this.gathering = DiceRandomizer.nextVal(STAT_MIN, STAT_MAX, 3);
+        this.fighting = DiceRandomizer.nextVal(STAT_MIN, STAT_MAX, 3);
         this.mission = null;
     }
 

@@ -6,7 +6,6 @@
 package MtM.view.swingcomponents;
 
 import java.awt.Color;
-import java.awt.Graphics;
 import java.awt.event.ActionEvent;
 import java.awt.event.MouseEvent;
 import java.awt.event.MouseListener;
@@ -18,24 +17,22 @@ import javax.swing.border.Border;
  *
  * @author Colin
  */
-public class MinionButton extends JPanel implements MouseListener {
+public class MButton extends JPanel implements MouseListener {
 
     private int btnID;
     private boolean selected;
     private static Border borderHover;
-    private MinionPane minionPane;
+    private MPanel mPanel;
 
     /**
      * Creates new form MinionButton
      *
-     * @param id - the button's id
      */
-    public MinionButton() {
+    public MButton() {
         initComponents();
         this.btnID = 0;
         this.addMouseListener(this);
         borderHover = BorderFactory.createLineBorder(Color.green);
-        this.setBorder(null);
         selected = false;
         updateColor();
         this.dispatchEvent(new ActionEvent(this, ActionEvent.ACTION_FIRST, "paint"));
@@ -51,6 +48,7 @@ public class MinionButton extends JPanel implements MouseListener {
     private void initComponents() {
 
         setBackground(new java.awt.Color(0, 255, 255));
+        setCursor(new java.awt.Cursor(java.awt.Cursor.DEFAULT_CURSOR));
         setMaximumSize(new java.awt.Dimension(10000, 100000));
         setMinimumSize(new java.awt.Dimension(50, 50));
         setPreferredSize(new java.awt.Dimension(50, 50));
@@ -99,12 +97,12 @@ public class MinionButton extends JPanel implements MouseListener {
         this.btnID = btnID;
     }
 
-    public MinionPane getMinionPane() {
-        return minionPane;
+    public MPanel getmPanel() {
+        return mPanel;
     }
 
-    public void setMinionPane(MinionPane minionPane) {
-        this.minionPane = minionPane;
+    public void setMPanel(MPanel mPanel) {
+        this.mPanel = mPanel;
     }
 
     public boolean isSelected() {
@@ -118,7 +116,7 @@ public class MinionButton extends JPanel implements MouseListener {
 
     public void processPress() {
         setSelected(!selected);
-        minionPane.processSelection(btnID);
+        mPanel.processSelection(btnID);
     }
 
 

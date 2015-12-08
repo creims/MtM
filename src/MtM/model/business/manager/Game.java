@@ -1,10 +1,8 @@
 package MtM.model.business.manager;
 
 import MtM.model.domain.Minion;
-import java.io.FileInputStream;
-import java.io.FileNotFoundException;
-import java.io.IOException;
-import java.io.PrintWriter;
+import MtM.model.domain.Mission;
+import java.io.*;
 import java.util.Properties;
 import java.util.Scanner;
 import java.util.logging.Level;
@@ -17,8 +15,11 @@ import java.util.logging.Logger;
 public class Game {
 
     private int tickRate, numMinions, maxMinions;
+    
     private Minion[] minions;
-    String saveFile;
+    private Mission[] missions;
+    
+    private String saveFile;
     private static final String SAVE_PATH = "save/";
     private static final String PROPS_PATH = "config/config.txt";
 
@@ -101,9 +102,8 @@ public class Game {
     /**
      *
      * @return false if the current file is null
-     * @throws FileNotFoundException
      */
-    public boolean saveGame() throws FileNotFoundException {
+    public boolean saveGame() {
         if (saveFile == null) {
             return false;
         }
@@ -111,16 +111,21 @@ public class Game {
         return true;
     }
 
-    public void saveGame(String file) throws FileNotFoundException {
+    public void saveGame(String file) {
         this.saveFile = file;
-        PrintWriter writer = new PrintWriter(saveFile);
-        for (Minion m : minions) {
-            if (m == null) {
-                continue;
+        PrintWriter writer;
+        try {
+            writer = new PrintWriter(new FileOutputStream(SAVE_PATH + saveFile), true);
+            for (Minion m : minions) {
+                if (m == null) {
+                    continue;
+                }
+                writer.println(m.saveString());
             }
-            writer.println(m.saveString());
+            writer.close();
+        } catch (FileNotFoundException ex) {
+            System.out.println("wut");
         }
-        writer.close();
 
     }
 
@@ -188,5 +193,9 @@ public class Game {
 
     public String getSaveFile() {
         return saveFile;
+    }
+
+    public String printMissionn(int parseInt) {
+        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
     }
 }

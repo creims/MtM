@@ -2,6 +2,7 @@ package MtM.model.domain;
 
 import java.math.BigDecimal;
 import java.math.RoundingMode;
+import java.util.Random;
 import java.util.concurrent.ThreadLocalRandom;
 
 /**
@@ -10,24 +11,17 @@ import java.util.concurrent.ThreadLocalRandom;
  */
 public class DiceRandomizer {
 
-    private double diceMin, diceMax;
-    private int numDice;
-    private final ThreadLocalRandom random;
+    private static final Random random = new Random();
     
     private static final int DECIMAL_PLACES = 2;
-
-    public DiceRandomizer(double min, double max, int numDice) {
-        this.diceMin = min;
-        this.diceMax = max;
-        this.numDice = numDice;
-        random = ThreadLocalRandom.current();
-    }
-
-    public double nextVal() {
+    
+    public static double nextVal(double min, double max, int numDice) {
         double ret = 0;
+        
+        double diff = max - min;
 
         for (int i = 0; i < numDice; i++) {
-            ret += random.nextDouble(diceMin, diceMax);
+            ret += random.nextDouble() * diff + min;
         }
 
         return round(ret, DECIMAL_PLACES);
@@ -39,28 +33,7 @@ public class DiceRandomizer {
         return bd.doubleValue();
     }
 
-    public double getDiceMin() {
-        return diceMin;
+    public static boolean coinFlip() {
+        return random.nextBoolean();
     }
-
-    public void setDiceMin(double diceMin) {
-        this.diceMin = diceMin;
-    }
-
-    public double getDiceMax() {
-        return diceMax;
-    }
-
-    public void setDiceMax(double diceMax) {
-        this.diceMax = diceMax;
-    }
-
-    public int getNumDice() {
-        return numDice;
-    }
-
-    public void setNumDice(int numDice) {
-        this.numDice = numDice;
-    }
-
 }
