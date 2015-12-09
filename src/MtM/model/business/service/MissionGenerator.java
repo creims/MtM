@@ -25,7 +25,7 @@ public class MissionGenerator {
             secondaryStat = null;
         } else { //double-stat missions
             val1 = DiceRandomizer.nextVal(1, Math.floor(difficulty * 3), 1);
-            val2 = Math.floor((difficulty * 3) - val1);
+            val2 = Math.floor(difficulty * 3) - val1;
 
             // swap to ensure primary bigger for display purposes
             if (val2 > val1) {

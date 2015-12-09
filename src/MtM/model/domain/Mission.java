@@ -173,4 +173,17 @@ public class Mission {
     public void setReward(double reward) {
         this.reward = reward;
     }
+
+    @Override
+    public String toString() {
+        return "Mission Type: " + type.toString()
+                + "\n\n’Twas brillig, and the slithy toves\n"
+                + "      Did gyre and gimble in the wabe:\n"
+                + "All mimsy were the borogoves,\n"
+                + "      And the mome raths outgrabe.\n\n"
+                + primaryStat.toString() + (secondaryStat != null ? "\n" + secondaryStat.toString() : "")
+                + "\n\nMission Status: " + (active ? "Active" : "Available") + 
+                 "\nReward: "+ reward;
+    }
+
 }

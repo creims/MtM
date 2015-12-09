@@ -50,4 +50,21 @@ public enum MissionType {
                 return null;        
         }
     }
+
+    @Override
+    public String toString() {
+        switch(this) {
+            case MINING: return "Mining"; 
+            case SCOUT: return "Scouting"; 
+            case HACK: return "Hacking";
+            case DEFEND: return "Defend";
+            case STAR_SIPHON: return "Siphon Star";
+            case SALVAGE: return "Salvage";
+            case RAID: return "Raid";
+            case INVESTIGATE: return "Investigation";
+            case BOUNTY_HUNT: return "Bounty Hunt";
+            case SABOTAGE: return "Sabotage";
+            default: return "MISSIONTYPE NOT IMPLEMENTED";
+        }
+    }
 }

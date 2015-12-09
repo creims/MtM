@@ -1,4 +1,6 @@
-#Tue Dec 08 07:30:26 MST 2015
+#Wed Dec 09 14:54:14 MST 2015
+StartingCatnip=1000
 LastGame=testsave5.txt
+MaxMissions=15
 MaxMinions=5
 TickRate=1000

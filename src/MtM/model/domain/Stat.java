@@ -51,4 +51,10 @@ public class Stat {
         this.type = type;
     }
 
+    @Override
+    public String toString() {
+        return type.toString() + ": " + MtMUtil.round(value, 2);
+    }
+
+    
 }

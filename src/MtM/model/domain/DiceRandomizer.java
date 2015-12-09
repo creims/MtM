@@ -1,9 +1,6 @@
 package MtM.model.domain;
 
-import java.math.BigDecimal;
-import java.math.RoundingMode;
 import java.util.Random;
-import java.util.concurrent.ThreadLocalRandom;
 
 /**
  *
@@ -11,9 +8,7 @@ import java.util.concurrent.ThreadLocalRandom;
  */
 public class DiceRandomizer {
 
-    private static final Random random = new Random();
-    
-    private static final int DECIMAL_PLACES = 2;
+    private static Random random = new Random();
     
     public static double nextVal(double min, double max, int numDice) {
         double ret = 0;
@@ -24,13 +19,7 @@ public class DiceRandomizer {
             ret += random.nextDouble() * diff + min;
         }
 
-        return round(ret, DECIMAL_PLACES);
-    }
-
-    public static double round(double value, int places) {
-        BigDecimal bd = new BigDecimal(value);
-        bd = bd.setScale(places, RoundingMode.HALF_UP);
-        return bd.doubleValue();
+        return ret;
     }
 
     public static boolean coinFlip() {

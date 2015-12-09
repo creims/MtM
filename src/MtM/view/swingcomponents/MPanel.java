@@ -1,13 +1,9 @@
-/*
- * To change this license header, choose License Headers in Project Properties.
- * To change this template file, choose Tools | Templates
- * and open the template in the editor.
- */
 package MtM.view.swingcomponents;
 
 import java.awt.Dimension;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.util.Arrays;
 import javax.swing.JPanel;
 
 /**
@@ -16,8 +12,10 @@ import javax.swing.JPanel;
  */
 public class MPanel extends JPanel {
 
-    private final MButton[] btnArray;
-    private int index, selected;
+    protected final MButton[] btnArray;
+    protected int index, selected;
+    protected int btnHeight;
+    protected boolean initialized;
 
     /**
      * Creates new form MinionPane
@@ -25,23 +23,45 @@ public class MPanel extends JPanel {
     public MPanel() {
         initComponents();
         btnArray = new MButton[20];
-
         index = 0;
+        initialized = false;
+    }
+
+    public void revertSize() {
+        setPreferredSize(super.getPreferredSize());
     }
 
     public void addMBtn() {
         MButton newBtn = new MButton();
         int size = getWidth() - 20;
         newBtn.setPreferredSize(new Dimension(size, size / 2));
-        newBtn.setLocation(10, 10 + index * (size + 10));
+        newBtn.setLocation(10, 10 + index * btnHeight);
         newBtn.setBtnID(index);
         btnArray[index] = newBtn;
-        setPreferredSize(new Dimension(size, 20 + (size / 2 + 10) * (index + 1)));
         index++;
         add(newBtn);
         revalidate();
         newBtn.setMPanel(this);
         newBtn.processPress();
+    }
+
+    @Override
+    public Dimension getPreferredSize() {
+        if (!initialized) {
+            initialized = true;
+            btnHeight = super.getPreferredSize().height / 4;
+            return super.getPreferredSize();
+        }
+
+        if (index < 4) {
+            return new Dimension(getWidth(), (btnHeight - 2) * 4 + 5);
+        }
+        return new Dimension(getWidth(), (btnHeight - 2) * (index + 1) + 5);
+    }
+
+    public void clear() {
+        Arrays.fill(btnArray, null);
+        index = 0;
     }
 
     public void processSelection(int id) {
@@ -52,22 +72,22 @@ public class MPanel extends JPanel {
             }
             btnArray[i].setSelected(false);
         }
-        
+
         fireActionEvent(new ActionEvent(this, ActionEvent.ACTION_FIRST, "" + id));
     }
-    
+
     public void addActionListener(ActionListener l) {
         listenerList.add(ActionListener.class, l);
     }
-    
+
     private void swap(int i1, int i2) {
         MButton temp = btnArray[i1];
         btnArray[i1] = btnArray[i2];
         btnArray[i2] = temp;
     }
-    
+
     protected void fireActionEvent(ActionEvent e) {
-        for(ActionListener a : listenerList.getListeners(ActionListener.class)) {
+        for (ActionListener a : listenerList.getListeners(ActionListener.class)) {
             a.actionPerformed(e);
         }
     }
@@ -82,9 +102,8 @@ public class MPanel extends JPanel {
     private void initComponents() {
 
         setToolTipText("");
-        setPreferredSize(new java.awt.Dimension(60, 400));
+        setPreferredSize(new java.awt.Dimension(60, 60));
         setLayout(new java.awt.FlowLayout(java.awt.FlowLayout.CENTER, 15, 10));
-        getAccessibleContext().setAccessibleDescription("");
     }// </editor-fold>//GEN-END:initComponents
 
 

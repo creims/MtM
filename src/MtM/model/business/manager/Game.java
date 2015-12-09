@@ -1,27 +1,40 @@
 package MtM.model.business.manager;
 
+import MtM.model.business.service.MissionGenerator;
 import MtM.model.domain.Minion;
 import MtM.model.domain.Mission;
-import java.io.*;
 import java.util.Properties;
-import java.util.Scanner;
-import java.util.logging.Level;
-import java.util.logging.Logger;
 
 /**
+ * Contains information about the game state
  *
  * @author Colin
  */
 public class Game {
+    private final static int MISSION_AVAILABLE_TARGET = 6;
 
-    private int tickRate, numMinions, maxMinions;
-    
-    private Minion[] minions;
-    private Mission[] missions;
-    
-    private String saveFile;
-    private static final String SAVE_PATH = "save/";
-    private static final String PROPS_PATH = "config/config.txt";
+    private final int maxMinions, maxMissions;
+    private int tickRate, numMinions, numMissions, numActiveMissions, difficulty;
+    private final Minion[] minions;
+    private final Mission[] missions;
+
+    private long catnip;
+
+    public Game(Properties p) {
+        tickRate = Integer.parseInt(p.getProperty("TickRate"));
+        maxMinions = Integer.parseInt(p.getProperty("MaxMinions"));
+        maxMissions = Integer.parseInt(p.getProperty("MaxMissions"));
+        catnip = Long.parseLong(p.getProperty("StartingCatnip"));
+
+        minions = new Minion[maxMinions];
+        missions = new Mission[maxMissions];
+        numMinions = 0;
+        numMissions = 0;
+        numActiveMissions = 0;
+        difficulty = 1;
+
+        catnip = 1000;
+    }
 
     /**
      * Get the value of numMinions
@@ -39,41 +52,6 @@ public class Game {
      */
     public void setNumMinions(int numMinions) {
         this.numMinions = numMinions;
-    }
-
-    public Game() {
-        Properties p = loadProps();
-
-        loadGame(p.getProperty("LastGame"));
-    }
-
-    public boolean loadGame(String fileName) {
-        minions = new Minion[maxMinions];
-        numMinions = 0;
-
-        saveFile = fileName;
-        Scanner input;
-        try {
-            FileInputStream file = new FileInputStream(SAVE_PATH + fileName);
-            input = new Scanner(file);
-        } catch (FileNotFoundException ex) {
-            newGame();
-            return false;
-        }
-
-        //add the minions
-        input.useDelimiter("\\s*[,\n]\\s*");
-
-        boolean done;
-        while (input.hasNext()) {
-            //if the add fails, discontinue loading the file
-            // TODO: error handling
-            if (!addMinion(new Minion(input.next(), input.nextDouble(), input.nextDouble(), input.nextDouble(), input.nextDouble()))) {
-                return true;
-            }
-        }
-
-        return true;
     }
 
     /**
@@ -94,47 +72,21 @@ public class Game {
         this.tickRate = tickRate;
     }
 
-    public void newGame() {
-        saveFile = null;
-        minions = new Minion[maxMinions];
-    }
-
-    /**
-     *
-     * @return false if the current file is null
-     */
-    public boolean saveGame() {
-        if (saveFile == null) {
-            return false;
-        }
-        saveGame(saveFile);
-        return true;
-    }
-
-    public void saveGame(String file) {
-        this.saveFile = file;
-        PrintWriter writer;
-        try {
-            writer = new PrintWriter(new FileOutputStream(SAVE_PATH + saveFile), true);
-            for (Minion m : minions) {
-                if (m == null) {
-                    continue;
-                }
-                writer.println(m.saveString());
-            }
-            writer.close();
-        } catch (FileNotFoundException ex) {
-            System.out.println("wut");
-        }
-
-    }
-
     public boolean addMinion(Minion minion) {
         if (numMinions >= maxMinions) {
             return false;
         }
 
         minions[numMinions++] = minion;
+        return true;
+    }
+    
+        public boolean addMission(Mission mission) {
+        if (numMissions >= maxMissions) {
+            return false;
+        }
+
+        missions[numMissions++] = mission;
         return true;
     }
 
@@ -154,48 +106,45 @@ public class Game {
         return minions[i].getName();
     }
 
-    public Properties loadProps() {
-        try {
-            FileInputStream file = new FileInputStream(PROPS_PATH);
-            Properties p = new Properties();
-            p.load(file);
-            file.close();
-
-            tickRate = Integer.parseInt(p.getProperty("TickRate"));
-            maxMinions = Integer.parseInt(p.getProperty("MaxMinions"));
-
-            return p;
-        } catch (IOException ex) {
-            System.out.println(ex);
-            System.out.println("Config file not found or is wrong.");
-            System.exit(1);
+    public String getMissionType(int i) {
+        if (i > numMissions - 1 || i < 0) {
+            return "No Minion";
         }
 
-        return null;
+        return missions[i].getType().toString();
     }
 
-    public void saveProps() {
-        try {
-            FileInputStream file = new FileInputStream("config/config.txt");
-            Properties p = new Properties();
-            p.load(file);
-            p.put("LastGame", (saveFile == null) ? "" : saveFile);
-            p.put("TickRate", "" + tickRate);
-            p.put("MaxMinions", "" + maxMinions);
+    public long getCatnip() {
+        return catnip;
+    }
 
-            PrintWriter writer = new PrintWriter(PROPS_PATH);
-            p.store(writer, null);
-            writer.close();
-        } catch (IOException ex) {
-            Logger.getLogger(Game.class.getName()).log(Level.SEVERE, null, ex);
+    public String printMission(int i) {
+        if (i > numMissions - 1 || i < 0) {
+            return "No Mission";
+        }
+        return missions[i].toString();
+    }
+
+    public Minion[] getMinions() {
+        return minions;
+    }
+
+    public Mission[] getMissions() {
+        return missions;
+    }
+
+    public int getMaxMinions() {
+        return maxMinions;
+    }
+
+    public int getMaxMissions() {
+        return maxMissions;
+    }
+
+    void populateMissions() {
+        while(numMissions - numActiveMissions < MISSION_AVAILABLE_TARGET) {
+            addMission(MissionGenerator.generateMission(difficulty));
         }
     }
 
-    public String getSaveFile() {
-        return saveFile;
-    }
-
-    public String printMissionn(int parseInt) {
-        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
-    }
 }
