@@ -11,6 +11,7 @@ import java.util.Properties;
  * @author Colin
  */
 public class Game {
+
     private final static int MISSION_AVAILABLE_TARGET = 6;
 
     private final int maxMinions, maxMissions;
@@ -80,8 +81,8 @@ public class Game {
         minions[numMinions++] = minion;
         return true;
     }
-    
-        public boolean addMission(Mission mission) {
+
+    public boolean addMission(Mission mission) {
         if (numMissions >= maxMissions) {
             return false;
         }
@@ -142,9 +143,57 @@ public class Game {
     }
 
     void populateMissions() {
-        while(numMissions - numActiveMissions < MISSION_AVAILABLE_TARGET) {
+        while (numMissions - numActiveMissions < MISSION_AVAILABLE_TARGET) {
             addMission(MissionGenerator.generateMission(difficulty));
         }
+        System.out.println("");
+    }
+
+    public Mission getMission(int i) {
+        return missions[i];
+    }
+
+    public void swapMissions(int i1, int i2) {
+        Mission temp = missions[i1];
+        missions[i1] = missions[i2];
+        missions[i2] = temp;
+    }
+
+    public void activateMission(int index) {
+        if (missions[index].isActive()) {
+            return;
+        }
+
+        minions[index].setActive(true);
+        missions[index].setActive(true);
+        numActiveMissions++;
+    }
+
+    public void completeMission(int index) {
+        if (!missions[index].isActive()) {
+            return;
+        }
+
+        minions[index].setActive(false);
+        catnip += missions[index].getReward();
+        missions[index] = MissionGenerator.generateMission(difficulty);
+        numActiveMissions--;
+    }
+
+    public Mission[] getActiveMissions() {
+        Mission[] ret = new Mission[missions.length];
+
+        for (int i = 0; i < ret.length; i++) {
+            Mission m = missions[i];
+            if(m == null) ret[i] = null;
+            else ret[i] = m.isActive() ? m : null;
+        }
+
+        return ret;
+    }
+
+    public boolean getMinionActive(int i) {
+        return minions[i].isActive();
     }
 
 }

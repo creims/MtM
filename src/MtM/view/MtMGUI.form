@@ -112,18 +112,21 @@
                   <Group type="102" alignment="0" attributes="0">
                       <Component id="minionDisplayScrollPane" pref="219" max="32767" attributes="0"/>
                       <EmptySpace max="-2" attributes="0"/>
-                      <Group type="103" groupAlignment="0" attributes="0">
+                      <Group type="103" groupAlignment="0" max="-2" attributes="0">
                           <Component id="mScrollPane" min="-2" max="-2" attributes="0"/>
                           <Group type="102" attributes="0">
                               <Component id="labelCatnip" min="-2" pref="88" max="-2" attributes="0"/>
                               <EmptySpace max="-2" attributes="0"/>
                               <Component id="labelCatnipNum" min="-2" pref="156" max="-2" attributes="0"/>
-                              <EmptySpace min="-2" pref="27" max="-2" attributes="0"/>
-                              <Component id="rosterButton" min="-2" pref="103" max="-2" attributes="0"/>
+                              <EmptySpace max="-2" attributes="0"/>
+                              <Component id="rosterButton" max="32767" attributes="0"/>
                           </Group>
                       </Group>
                       <EmptySpace max="-2" attributes="0"/>
-                      <Component id="missionDisplayScrollPane" pref="219" max="32767" attributes="0"/>
+                      <Group type="103" groupAlignment="0" attributes="0">
+                          <Component id="missionDisplayScrollPane" pref="219" max="32767" attributes="0"/>
+                          <Component id="missionActionButton" max="32767" attributes="0"/>
+                      </Group>
                   </Group>
               </Group>
               <EmptySpace max="-2" attributes="0"/>
@@ -136,23 +139,27 @@
               <EmptySpace min="-2" pref="5" max="-2" attributes="0"/>
               <Group type="103" groupAlignment="1" attributes="0">
                   <Component id="minionDisplayScrollPane" alignment="0" max="32767" attributes="0"/>
-                  <Component id="missionDisplayScrollPane" alignment="0" max="32767" attributes="0"/>
                   <Group type="102" attributes="0">
-                      <Group type="103" groupAlignment="1" attributes="0">
+                      <Group type="103" groupAlignment="0" attributes="0">
                           <Group type="102" attributes="0">
-                              <Component id="rosterButton" min="-2" pref="35" max="-2" attributes="0"/>
-                              <EmptySpace min="5" pref="5" max="-2" attributes="0"/>
+                              <Component id="rosterButton" max="32767" attributes="0"/>
+                              <EmptySpace min="1" pref="1" max="-2" attributes="0"/>
                           </Group>
                           <Group type="103" groupAlignment="3" attributes="0">
                               <Component id="labelCatnip" alignment="3" min="-2" pref="46" max="-2" attributes="0"/>
                               <Component id="labelCatnipNum" alignment="3" min="-2" pref="46" max="-2" attributes="0"/>
                           </Group>
                       </Group>
-                      <EmptySpace max="32767" attributes="0"/>
+                      <EmptySpace min="-2" pref="7" max="-2" attributes="0"/>
                       <Component id="mScrollPane" min="-2" pref="350" max="-2" attributes="0"/>
                   </Group>
+                  <Group type="102" alignment="0" attributes="0">
+                      <Component id="missionDisplayScrollPane" min="-2" pref="320" max="-2" attributes="0"/>
+                      <EmptySpace max="-2" attributes="0"/>
+                      <Component id="missionActionButton" max="32767" attributes="0"/>
+                  </Group>
               </Group>
-              <EmptySpace max="32767" attributes="0"/>
+              <EmptySpace max="-2" attributes="0"/>
               <Component id="logScrollPane" min="-2" max="-2" attributes="0"/>
               <EmptySpace max="-2" attributes="0"/>
           </Group>
@@ -361,6 +368,19 @@
       <Properties>
         <Property name="text" type="java.lang.String" value="Roster"/>
       </Properties>
+    </Component>
+    <Component class="javax.swing.JButton" name="missionActionButton">
+      <Properties>
+        <Property name="font" type="java.awt.Font" editor="org.netbeans.modules.form.editors2.FontEditor">
+          <FontInfo relative="true">
+            <Font bold="true" component="missionActionButton" property="font" relativeSize="true" size="14"/>
+          </FontInfo>
+        </Property>
+        <Property name="text" type="java.lang.String" value="Assign"/>
+      </Properties>
+      <Events>
+        <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="missionActionButtonActionPerformed"/>
+      </Events>
     </Component>
   </SubComponents>
 </Form>

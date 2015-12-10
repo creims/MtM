@@ -15,9 +15,14 @@ import javax.swing.border.Border;
 public class MButton extends JLayeredPane implements MouseListener {
 
     protected int btnID;
-    protected boolean selected;
+    protected boolean selected, active;
     protected static Border borderHover;
     protected MPanel mPanel;
+    
+    private static final Color COLOR_ACTIVE_SELECTED = new Color(200, 50, 250);
+    private static final Color COLOR_INACTIVE_SELECTED = Color.red;
+    private static final Color COLOR_ACTIVE_UNSELECTED = new Color(100, 0, 200);
+    private static final Color COLOR_INACTIVE_UNSELECTED = Color.gray;
 
     /**
      * Creates new form MinionButton
@@ -29,6 +34,7 @@ public class MButton extends JLayeredPane implements MouseListener {
         this.addMouseListener(this);
         borderHover = BorderFactory.createLineBorder(Color.green);
         selected = false;
+        active = false;
         this.dispatchEvent(new ActionEvent(this, ActionEvent.ACTION_FIRST, "paint"));
     }
 
@@ -77,9 +83,17 @@ public class MButton extends JLayeredPane implements MouseListener {
 
     protected void updateColor() {
         if (selected) {
-            this.setBackground(Color.red);
+            if (active) {
+                this.setBackground(COLOR_ACTIVE_SELECTED);
+            } else {
+                this.setBackground(COLOR_INACTIVE_SELECTED);
+            }
         } else {
-            this.setBackground(Color.gray);
+            if (active) {
+                this.setBackground(COLOR_ACTIVE_UNSELECTED);
+            } else {
+                this.setBackground(COLOR_INACTIVE_UNSELECTED);
+            }
         }
     }
 
@@ -109,8 +123,17 @@ public class MButton extends JLayeredPane implements MouseListener {
     }
 
     public void processPress() {
-        setSelected(!selected);
+        setSelected(true);
         mPanel.processSelection(btnID);
+    }
+
+    public void setActive(boolean state) {
+        active = state;
+        updateColor();
+    }
+
+    public boolean getActive() {
+        return active;
     }
 
 

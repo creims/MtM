@@ -12,12 +12,15 @@ import java.util.concurrent.ThreadLocalRandom;
  * @author Colin
  */
 public class Minion {
+
     private static final double STAT_MIN = 1, STAT_MAX = 6;
 
     private String name;
     private Mission mission;
 
     private double perception, tech, gathering, fighting;
+
+    private boolean active;
 
     public Minion() {
         this.name = randomName();
@@ -128,4 +131,21 @@ public class Minion {
         return name + "," + perception + "," + tech + "," + gathering + "," + fighting;
     }
 
+    /**
+     * Get the value of active
+     *
+     * @return the value of active
+     */
+    public boolean isActive() {
+        return active;
+    }
+
+    /**
+     * Set the value of active
+     *
+     * @param active new value of active
+     */
+    public void setActive(boolean active) {
+        this.active = active;
+    }
 }

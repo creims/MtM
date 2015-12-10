@@ -1,6 +1,7 @@
 package MtM.view.swingcomponents;
 
 import java.awt.Dimension;
+import java.awt.Point;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.util.Arrays;
@@ -63,6 +64,10 @@ public class MPanel extends JPanel {
         Arrays.fill(btnArray, null);
         index = 0;
     }
+    
+    public void setSelection(int id) {
+        btnArray[id].setSelected(true);
+    }
 
     public void processSelection(int id) {
         selected = id;
@@ -80,10 +85,43 @@ public class MPanel extends JPanel {
         listenerList.add(ActionListener.class, l);
     }
 
-    private void swap(int i1, int i2) {
+    public void swap(int i1, int i2) {
         MButton temp = btnArray[i1];
         btnArray[i1] = btnArray[i2];
         btnArray[i2] = temp;
+
+        reorderButtons();
+    }
+
+    private void reorderButtons() {
+        for (MButton m : btnArray) {
+            if (m == null) {
+                break;
+            }
+            remove(m);
+        }
+
+        for (int i = 0; i < btnArray.length; i++) {
+            MButton m = btnArray[i];
+            if (m == null) {
+                break;
+            }
+            m.setLocation(10, 10 + i * btnHeight);
+            m.setBtnID(i);
+            add(m);
+        }
+    }
+
+    public int getSelected() {
+        return selected;
+    }
+
+    public void setActive(int i, boolean state) {
+        btnArray[i].setActive(state);
+    }
+
+    public boolean getActive(int i) {
+        return btnArray[i].getActive();
     }
 
     protected void fireActionEvent(ActionEvent e) {

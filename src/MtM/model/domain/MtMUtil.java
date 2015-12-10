@@ -14,4 +14,8 @@ public class MtMUtil {
         bd = bd.setScale(places, RoundingMode.HALF_UP);
         return bd.doubleValue();
     }
+    
+    public static int toPercent(int numerator, int denominator) {
+        return (numerator * 100) / denominator;        
+    }
 }

@@ -45,7 +45,7 @@ public class MtMGUI extends javax.swing.JFrame {
             if (m == null) {
                 break;
             }
-            missionPanel.addMissionBtn(m.getType().toString());
+            addMission(m);
         }
         SwingUtilities.invokeLater(() -> {
             updateViewPanel();
@@ -110,6 +110,26 @@ public class MtMGUI extends javax.swing.JFrame {
         });
     }
 
+    private void updateMissionActionButton() {
+        Mission m = game.getMission(missionPanel.getSelected());
+
+        if (m.isActive()) {
+            missionActionButton.setText("Complete");
+            if (m.isDone()) {
+                missionActionButton.setEnabled(true);
+            } else {
+                missionActionButton.setEnabled(false);
+            }
+        } else {
+            missionActionButton.setText("Assign");
+            if (game.getMinionActive(minionPanel.getSelected())) {
+                missionActionButton.setEnabled(false);
+            } else {
+                missionActionButton.setEnabled(true);
+            }
+        }
+    }
+
     /**
      * Handles tick updates
      */
@@ -117,7 +137,21 @@ public class MtMGUI extends javax.swing.JFrame {
 
         @Override
         public void actionPerformed(ActionEvent e) {
-            //System.out.println("tick");
+            Mission[] activeMissions = game.getActiveMissions();
+            for (int i = 0; i < activeMissions.length; i++) {
+                Mission m = activeMissions[i];
+
+                if (m == null) {
+                    continue;
+                }
+                //mission is done
+                if (m.update()) {
+                    missionPanel.setDone(i);
+                } else {
+                    missionPanel.updateProgress(i, m.getCurrentTime());
+                }
+
+            }
         }
 
     }
@@ -132,11 +166,13 @@ public class MtMGUI extends javax.swing.JFrame {
         timer = new Timer(game.getTickRate(), new Updater());
 
         minionPanel.addActionListener((ActionEvent e) -> {
-            minionDisplay.setText(game.printMinion(Integer.parseInt(e.getActionCommand())));
+            int minionID = Integer.parseInt(e.getActionCommand());
+            updateMinionDisplay(minionID);
         });
 
         missionPanel.addActionListener((ActionEvent e) -> {
-            missionDisplay.setText(game.printMission(Integer.parseInt(e.getActionCommand())));
+            int missionID = Integer.parseInt(e.getActionCommand());
+            updateMissionDisplay(missionID);
         });
 
         updateOnLoad();
@@ -144,7 +180,26 @@ public class MtMGUI extends javax.swing.JFrame {
         mScrollPane.getVerticalScrollBar().setUnitIncrement(16);
 
         timer.start();
+    }
 
+    public void updateMinionDisplay(int minionID) {
+        minionDisplay.setText(game.printMinion(minionID));
+        if (minionPanel.getSelected() != missionPanel.getSelected() && minionPanel.getActive(minionPanel.getSelected())) {
+            missionPanel.processSelection(minionID);
+            missionPanel.setSelection(minionID);
+        }
+
+        updateMissionActionButton();
+    }
+
+    public void updateMissionDisplay(int missionID) {
+        missionDisplay.setText(game.printMission(missionID));
+        if (minionPanel.getSelected() != missionPanel.getSelected() && missionPanel.getActive(missionPanel.getSelected())) {
+            minionPanel.processSelection(missionID);
+            minionPanel.setSelection(missionID);
+        }
+
+        updateMissionActionButton();
     }
 
     /**
@@ -169,6 +224,7 @@ public class MtMGUI extends javax.swing.JFrame {
         labelCatnip = new javax.swing.JLabel();
         labelCatnipNum = new javax.swing.JLabel();
         rosterButton = new javax.swing.JButton();
+        missionActionButton = new javax.swing.JButton();
         menuBar = new javax.swing.JMenuBar();
         fileMenu = new javax.swing.JMenu();
         fileSave = new javax.swing.JMenuItem();
@@ -233,6 +289,14 @@ public class MtMGUI extends javax.swing.JFrame {
         labelCatnipNum.setText("##########");
 
         rosterButton.setText("Roster");
+
+        missionActionButton.setFont(missionActionButton.getFont().deriveFont(missionActionButton.getFont().getStyle() | java.awt.Font.BOLD, missionActionButton.getFont().getSize()+14));
+        missionActionButton.setText("Assign");
+        missionActionButton.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                missionActionButtonActionPerformed(evt);
+            }
+        });
 
         fileMenu.setText("File");
 
@@ -306,16 +370,18 @@ public class MtMGUI extends javax.swing.JFrame {
                     .addGroup(layout.createSequentialGroup()
                         .addComponent(minionDisplayScrollPane, javax.swing.GroupLayout.DEFAULT_SIZE, 219, Short.MAX_VALUE)
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                        .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                        .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
                             .addComponent(mScrollPane, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                             .addGroup(layout.createSequentialGroup()
                                 .addComponent(labelCatnip, javax.swing.GroupLayout.PREFERRED_SIZE, 88, javax.swing.GroupLayout.PREFERRED_SIZE)
                                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                                 .addComponent(labelCatnipNum, javax.swing.GroupLayout.PREFERRED_SIZE, 156, javax.swing.GroupLayout.PREFERRED_SIZE)
-                                .addGap(27, 27, 27)
-                                .addComponent(rosterButton, javax.swing.GroupLayout.PREFERRED_SIZE, 103, javax.swing.GroupLayout.PREFERRED_SIZE)))
+                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                                .addComponent(rosterButton, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)))
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                        .addComponent(missionDisplayScrollPane, javax.swing.GroupLayout.DEFAULT_SIZE, 219, Short.MAX_VALUE)))
+                        .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                            .addComponent(missionDisplayScrollPane, javax.swing.GroupLayout.DEFAULT_SIZE, 219, Short.MAX_VALUE)
+                            .addComponent(missionActionButton, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))))
                 .addContainerGap())
         );
         layout.setVerticalGroup(
@@ -324,18 +390,21 @@ public class MtMGUI extends javax.swing.JFrame {
                 .addGap(5, 5, 5)
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
                     .addComponent(minionDisplayScrollPane, javax.swing.GroupLayout.Alignment.LEADING)
-                    .addComponent(missionDisplayScrollPane, javax.swing.GroupLayout.Alignment.LEADING)
                     .addGroup(layout.createSequentialGroup()
-                        .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
+                        .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                             .addGroup(layout.createSequentialGroup()
-                                .addComponent(rosterButton, javax.swing.GroupLayout.PREFERRED_SIZE, 35, javax.swing.GroupLayout.PREFERRED_SIZE)
-                                .addGap(5, 5, 5))
+                                .addComponent(rosterButton, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                                .addGap(1, 1, 1))
                             .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                                 .addComponent(labelCatnip, javax.swing.GroupLayout.PREFERRED_SIZE, 46, javax.swing.GroupLayout.PREFERRED_SIZE)
                                 .addComponent(labelCatnipNum, javax.swing.GroupLayout.PREFERRED_SIZE, 46, javax.swing.GroupLayout.PREFERRED_SIZE)))
-                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                        .addComponent(mScrollPane, javax.swing.GroupLayout.PREFERRED_SIZE, 350, javax.swing.GroupLayout.PREFERRED_SIZE)))
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                        .addGap(7, 7, 7)
+                        .addComponent(mScrollPane, javax.swing.GroupLayout.PREFERRED_SIZE, 350, javax.swing.GroupLayout.PREFERRED_SIZE))
+                    .addGroup(javax.swing.GroupLayout.Alignment.LEADING, layout.createSequentialGroup()
+                        .addComponent(missionDisplayScrollPane, javax.swing.GroupLayout.PREFERRED_SIZE, 320, javax.swing.GroupLayout.PREFERRED_SIZE)
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                        .addComponent(missionActionButton, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)))
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addComponent(logScrollPane, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addContainerGap())
         );
@@ -358,6 +427,7 @@ public class MtMGUI extends javax.swing.JFrame {
     private void debugSetTickRateActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_debugSetTickRateActionPerformed
         int newTickRate = Integer.parseInt(JOptionPane.showInputDialog(this, "New tick rate:"));
         timer.setDelay(newTickRate);
+        timer.restart();
     }//GEN-LAST:event_debugSetTickRateActionPerformed
 
     private void fileOpenActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_fileOpenActionPerformed
@@ -372,6 +442,50 @@ public class MtMGUI extends javax.swing.JFrame {
         addMinion();
     }//GEN-LAST:event_debugAddMinionActionPerformed
 
+    private void missionActionButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_missionActionButtonActionPerformed
+        if (missionActionButton.getText().equals("Assign")) {
+            beginMission();
+        } else {
+            completeMission();
+        }
+    }//GEN-LAST:event_missionActionButtonActionPerformed
+
+    private void beginMission() {
+        int minionID = minionPanel.getSelected();
+        int missionID = missionPanel.getSelected();
+
+        game.swapMissions(missionID, minionID);
+        missionPanel.swap(missionID, minionID);
+        missionPanel.processSelection(minionID);
+
+        minionPanel.setActive(minionID, true);
+        missionPanel.setActive(minionID, true);
+
+        game.activateMission(minionID);
+
+        updateMissionActionButton();
+        updateViewPanel();
+    }
+
+    private void completeMission() {
+        int minionID = minionPanel.getSelected();
+        int missionID = missionPanel.getSelected();
+
+        game.completeMission(missionID);
+        Mission newMission = game.getMission(missionID);
+        missionPanel.completeMission(missionID, newMission.getType().toString(), newMission.getTimeRequired());
+        missionPanel.processSelection(minionID);
+
+        minionPanel.setActive(minionID, false);
+        updateCatnip();
+
+        updateViewPanel();
+    }
+
+    private void updateCatnip() {
+        labelCatnipNum.setText("" + game.getCatnip());
+    }
+
     private void updateViewPanel() {
         int newHeight = Math.max(minionPanel.getHeight(), missionPanel.getHeight());
         mViewPanel.setPreferredSize(new Dimension(mViewPanel.getWidth(), newHeight));
@@ -385,8 +499,8 @@ public class MtMGUI extends javax.swing.JFrame {
         updateViewPanel();
     }
 
-    private void addMission() {
-        missionPanel.addMissionBtn(game.getMinionName(minionPanel.getNumMinions()));
+    private void addMission(Mission m) {
+        missionPanel.addMissionBtn(m.getType().toString(), m.getTimeRequired());
         updateViewPanel();
     }
 
@@ -439,6 +553,7 @@ public class MtMGUI extends javax.swing.JFrame {
     private javax.swing.JTextArea minionDisplay;
     private javax.swing.JScrollPane minionDisplayScrollPane;
     private MtM.view.swingcomponents.MinionPanel minionPanel;
+    private javax.swing.JButton missionActionButton;
     private javax.swing.JTextArea missionDisplay;
     private javax.swing.JScrollPane missionDisplayScrollPane;
     private MtM.view.swingcomponents.MissionPanel missionPanel;
