@@ -147,6 +147,7 @@ public class MtMGUI extends javax.swing.JFrame {
                 //mission is done
                 if (m.update()) {
                     missionPanel.setDone(i);
+                    log(game.getMinionName(i) + " has finished a mission. Go claim the reward!");
                 } else {
                     missionPanel.updateProgress(i, m.getCurrentTime());
                 }
@@ -183,21 +184,23 @@ public class MtMGUI extends javax.swing.JFrame {
     }
 
     public void updateMinionDisplay(int minionID) {
-        minionDisplay.setText(game.printMinion(minionID));
         if (minionPanel.getSelected() != missionPanel.getSelected() && minionPanel.getActive(minionPanel.getSelected())) {
             missionPanel.processSelection(minionID);
             missionPanel.setSelection(minionID);
         }
 
+        minionDisplay.setText(game.printMinion(minionID));
+
         updateMissionActionButton();
     }
 
     public void updateMissionDisplay(int missionID) {
-        missionDisplay.setText(game.printMission(missionID));
         if (minionPanel.getSelected() != missionPanel.getSelected() && missionPanel.getActive(missionPanel.getSelected())) {
             minionPanel.processSelection(missionID);
             minionPanel.setSelection(missionID);
         }
+
+        missionDisplay.setText(game.printMission(missionID));
 
         updateMissionActionButton();
     }
@@ -463,6 +466,10 @@ public class MtMGUI extends javax.swing.JFrame {
 
         game.activateMission(minionID);
 
+        log(game.getMinionName(minionID) + " started a "
+                + game.getMission(minionID).getType().toString() + " mission.");
+
+        missionDisplay.setText(game.printMission(minionID));
         updateMissionActionButton();
         updateViewPanel();
     }
@@ -471,14 +478,21 @@ public class MtMGUI extends javax.swing.JFrame {
         int minionID = minionPanel.getSelected();
         int missionID = missionPanel.getSelected();
 
+        Mission m = game.getMission(missionID);
+
+        log(game.getMinionName(minionID) + " completed a " + m.getType().toString()
+                + " mission! Gained " + m.getReward() + " catnip.");
+
         game.completeMission(missionID);
         Mission newMission = game.getMission(missionID);
         missionPanel.completeMission(missionID, newMission.getType().toString(), newMission.getTimeRequired());
         missionPanel.processSelection(minionID);
 
-        minionPanel.setActive(minionID, false);
-        updateCatnip();
+        log("New " + newMission.getType().toString() + " mission discovered.");
 
+        minionPanel.setActive(minionID, false);
+
+        updateCatnip();
         updateViewPanel();
     }
 

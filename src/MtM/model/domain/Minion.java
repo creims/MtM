@@ -148,4 +148,15 @@ public class Minion {
     public void setActive(boolean active) {
         this.active = active;
     }
+
+    public void growStat(Stat stat) {
+        if(stat == null) return;
+        
+        switch(stat.getType()) {
+            case PERCEPTION: perception += .2; break;
+            case TECH: tech += .2; break;
+            case GATHERING: gathering += .2; break;
+            case FIGHTING: fighting += .2; break;
+        }
+    }
 }

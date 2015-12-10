@@ -175,7 +175,10 @@ public class Game {
         }
 
         minions[index].setActive(false);
+        minions[index].growStat(missions[index].getPrimaryStat());
+        minions[index].growStat(missions[index].getSecondaryStat());
         catnip += missions[index].getReward();
+        difficulty += .2;
         missions[index] = MissionGenerator.generateMission(difficulty);
         numActiveMissions--;
     }
@@ -185,7 +188,7 @@ public class Game {
 
         for (int i = 0; i < ret.length; i++) {
             Mission m = missions[i];
-            if(m == null) ret[i] = null;
+            if(m == null || m.isDone()) ret[i] = null;
             else ret[i] = m.isActive() ? m : null;
         }
 

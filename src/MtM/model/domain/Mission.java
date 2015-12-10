@@ -182,7 +182,7 @@ public class Mission {
                 + "All mimsy were the borogoves,\n"
                 + "      And the mome raths outgrabe.\n\n"
                 + primaryStat.toString() + (secondaryStat != null ? "\n" + secondaryStat.toString() : "")
-                + "\n\nMission Status: " + (active ? "Active" : "Available") + 
+                + "\n\nMission Status: " + (done ? "Done" : active ? "Active" : "Available") + 
                  "\nReward: "+ reward;
     }
 
