@@ -1,5 +1,6 @@
 package MtM.view.swingcomponents;
 
+import MtM.model.domain.Minion;
 import java.awt.Dimension;
 
 /**
@@ -11,12 +12,11 @@ public class MinionPanel extends MPanel {
         super();
     }
 
-    public void addMinionBtn(String name) {
-        MinionButton newBtn = new MinionButton();
+    public void addMinionBtn(Minion m) {
+        MinionButton newBtn = new MinionButton(m);
         int size = getWidth();
         newBtn.setPreferredSize(new Dimension(size - 10, size / 2 - 20));
         newBtn.setBtnID(index);
-        newBtn.setMinionName(name);
         btnArray[index++] = newBtn;
         add(newBtn);
         newBtn.setMPanel(this);

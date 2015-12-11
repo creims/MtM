@@ -3,6 +3,8 @@ package MtM.model.business.manager;
 import MtM.model.business.service.MissionGenerator;
 import MtM.model.domain.Minion;
 import MtM.model.domain.Mission;
+import java.util.ArrayList;
+import java.util.Collections;
 import java.util.Properties;
 
 /**
@@ -15,9 +17,11 @@ public class Game {
     private final static int MISSION_AVAILABLE_TARGET = 6;
 
     private final int maxMinions, maxMissions;
-    private int tickRate, numMinions, numMissions, numActiveMissions, difficulty;
-    private final Minion[] minions;
-    private final Mission[] missions;
+    private int tickRate, numActiveMissions;
+    private double difficulty;
+
+    private final ArrayList<Minion> minions;
+    private final ArrayList<Mission> missions;
 
     private long catnip;
 
@@ -27,32 +31,17 @@ public class Game {
         maxMissions = Integer.parseInt(p.getProperty("MaxMissions"));
         catnip = Long.parseLong(p.getProperty("StartingCatnip"));
 
-        minions = new Minion[maxMinions];
-        missions = new Mission[maxMissions];
-        numMinions = 0;
-        numMissions = 0;
+        minions = new ArrayList();
+        missions = new ArrayList();
+
         numActiveMissions = 0;
         difficulty = 1;
 
         catnip = 1000;
     }
 
-    /**
-     * Get the value of numMinions
-     *
-     * @return the value of numMinions
-     */
     public int getNumMinions() {
-        return numMinions;
-    }
-
-    /**
-     * Set the value of numMinions
-     *
-     * @param numMinions new value of numMinions
-     */
-    public void setNumMinions(int numMinions) {
-        this.numMinions = numMinions;
+        return minions.size();
     }
 
     /**
@@ -74,45 +63,45 @@ public class Game {
     }
 
     public boolean addMinion(Minion minion) {
-        if (numMinions >= maxMinions) {
+        if (minions.size() >= maxMinions) {
             return false;
         }
 
-        minions[numMinions++] = minion;
+        minions.add(minion);
         return true;
     }
 
     public boolean addMission(Mission mission) {
-        if (numMissions >= maxMissions) {
+        if (missions.size() >= maxMissions) {
             return false;
         }
 
-        missions[numMissions++] = mission;
+        missions.add(mission);
         return true;
     }
 
     public String printMinion(int i) {
-        if (i > numMinions - 1 || i < 0) {
+        if (i > minions.size() - 1 || i < 0) {
             return "No Minion";
         }
 
-        return minions[i].toString();
+        return minions.get(i).toString();
     }
 
     public String getMinionName(int i) {
-        if (i > numMinions - 1 || i < 0) {
+        if (i > minions.size() - 1 || i < 0) {
             return "No Minion";
         }
 
-        return minions[i].getName();
+        return minions.get(i).getName();
     }
 
     public String getMissionType(int i) {
-        if (i > numMissions - 1 || i < 0) {
+        if (i > missions.size() - 1 || i < 0) {
             return "No Minion";
         }
 
-        return missions[i].getType().toString();
+        return missions.get(i).getType().toString();
     }
 
     public long getCatnip() {
@@ -120,18 +109,18 @@ public class Game {
     }
 
     public String printMission(int i) {
-        if (i > numMissions - 1 || i < 0) {
+        if (i > missions.size() - 1 || i < 0) {
             return "No Mission";
         }
-        return missions[i].toString();
+        return missions.get(i).toString();
     }
 
     public Minion[] getMinions() {
-        return minions;
+        return (Minion[]) minions.toArray(new Minion[1]);
     }
 
     public Mission[] getMissions() {
-        return missions;
+        return (Mission[]) missions.toArray(new Mission[1]);
     }
 
     public int getMaxMinions() {
@@ -143,60 +132,80 @@ public class Game {
     }
 
     void populateMissions() {
-        while (numMissions - numActiveMissions < MISSION_AVAILABLE_TARGET) {
+        while (missions.size() - numActiveMissions < MISSION_AVAILABLE_TARGET) {
             addMission(MissionGenerator.generateMission(difficulty));
         }
         System.out.println("");
     }
 
     public Mission getMission(int i) {
-        return missions[i];
+        return missions.get(i);
     }
 
     public void swapMissions(int i1, int i2) {
-        Mission temp = missions[i1];
-        missions[i1] = missions[i2];
-        missions[i2] = temp;
+        Collections.swap(missions, i1, i2);
     }
 
-    public void activateMission(int index) {
-        if (missions[index].isActive()) {
+    public void activateMission(int i) {
+        Mission m = missions.get(i);
+        if (m.isActive()) {
             return;
         }
 
-        minions[index].setActive(true);
-        missions[index].setActive(true);
+        minions.get(i).setActive(true);
+        m.setActive(true);
         numActiveMissions++;
     }
 
-    public void completeMission(int index) {
-        if (!missions[index].isActive()) {
+    public void completeMission(int i) {
+        Mission mission = missions.get(i);
+        if (!mission.isActive()) {
             return;
         }
 
-        minions[index].setActive(false);
-        minions[index].growStat(missions[index].getPrimaryStat());
-        minions[index].growStat(missions[index].getSecondaryStat());
-        catnip += missions[index].getReward();
+        Minion minion = minions.get(i);
+
+        minion.setActive(false);
+        minion.growStat(mission.getPrimaryStat());
+        minion.growStat(mission.getSecondaryStat());
+        catnip += mission.getReward();
         difficulty += .2;
-        missions[index] = MissionGenerator.generateMission(difficulty);
+        missions.set(i, MissionGenerator.generateMission(difficulty));
         numActiveMissions--;
     }
 
     public Mission[] getActiveMissions() {
-        Mission[] ret = new Mission[missions.length];
+        Mission[] ret = new Mission[missions.size()];
 
         for (int i = 0; i < ret.length; i++) {
-            Mission m = missions[i];
-            if(m == null || m.isDone()) ret[i] = null;
-            else ret[i] = m.isActive() ? m : null;
+            Mission m = missions.get(i);
+            if (m == null || m.isDone()) {
+                ret[i] = null;
+            } else {
+                ret[i] = m.isActive() ? m : null;
+            }
         }
 
         return ret;
     }
 
     public boolean getMinionActive(int i) {
-        return minions[i].isActive();
+        if (i >= minions.size()) {
+            return false;
+        }
+        return minions.get(i).isActive();
+    }
+
+    void setCatnip(long newCatnipAmt) {
+        catnip = newCatnipAmt;
+    }
+
+    public double getDifficulty() {
+        return difficulty;
+    }
+
+    public void setDifficulty(double difficulty) {
+        this.difficulty = difficulty;
     }
 
 }

@@ -1,0 +1,10 @@
+[MINIONS]
+One, 1, 1, 1, 1
+Two, 2, 2, 2, 2
+[MISSIONS]
+RAID,100,1,0,false,false
+INVESTIGATE,100,1,0,false,false
+STAR_SIPHON,100,1,0,false,false
+RAID,100,1,0,false,false
+RAID,100,1,0,false,false
+BOUNTY_HUNT,100,1,0,false,false

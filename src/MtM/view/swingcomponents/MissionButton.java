@@ -1,5 +1,6 @@
 package MtM.view.swingcomponents;
 
+import MtM.model.domain.Mission;
 import static MtM.model.domain.MtMUtil.toPercent;
 import java.awt.CardLayout;
 
@@ -13,12 +14,14 @@ public class MissionButton extends MButton {
     private int maxTime;
     private int currentTime;
 
-    public MissionButton(int maxTime) {
+    public MissionButton(Mission m) {
         super();
         initComponents();
-        this.maxTime = maxTime;
-        this.currentTime = 0;
+        this.maxTime = m.getTimeRequired();
+        this.currentTime = m.getCurrentTime();
         statusPanelLayout = (CardLayout) statusPanel.getLayout();
+        setActive(m.isActive());
+        typeLabel.setText(m.getType().toString());
     }
 
     public void setAvailable() {
@@ -28,7 +31,7 @@ public class MissionButton extends MButton {
     public void setDone() {
         statusPanelLayout.show(statusPanel, "done");
     }
-    
+
     public void completeMission(String newType, int maxTime) {
         currentTime = 0;
         this.maxTime = maxTime;
@@ -41,14 +44,14 @@ public class MissionButton extends MButton {
     public void setActive(boolean state) {
         super.setActive(state);
         progressBar.setToolTipText(currentTime + " / " + maxTime);
-        
-        if(state) {
+
+        if (state) {
             statusPanelLayout.show(statusPanel, "active");
         } else {
             statusPanelLayout.show(statusPanel, "available");
         }
     }
-    
+
     public void setCurrentTime(int time) {
         currentTime = time;
         progressBar.setValue(toPercent(currentTime, maxTime));
@@ -141,9 +144,5 @@ public class MissionButton extends MButton {
     private javax.swing.JPanel statusPanel;
     private javax.swing.JLabel typeLabel;
     // End of variables declaration//GEN-END:variables
-
-    void setMissionType(String type) {
-        typeLabel.setText(type);
-    }
 
 }

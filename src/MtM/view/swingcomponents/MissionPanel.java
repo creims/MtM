@@ -1,5 +1,6 @@
 package MtM.view.swingcomponents;
 
+import MtM.model.domain.Mission;
 import java.awt.Dimension;
 
 /**
@@ -12,12 +13,11 @@ public class MissionPanel extends MPanel {
         super();
     }
 
-    public void addMissionBtn(String type, int maxTime) {
-        MissionButton newBtn = new MissionButton(maxTime);
+    public void addMissionBtn(Mission m) {
+        MissionButton newBtn = new MissionButton(m);
         int size = getWidth();
         newBtn.setPreferredSize(new Dimension(size - 10, size / 2 - 20));
         newBtn.setBtnID(index);
-        newBtn.setMissionType(type);
         btnArray[index++] = newBtn;
         add(newBtn);
         newBtn.setMPanel(this);

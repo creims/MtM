@@ -38,15 +38,17 @@ public class MtMGUI extends javax.swing.JFrame {
             if (m == null) {
                 break;
             }
-            minionPanel.addMinionBtn(m.getName());
+            minionPanel.addMinionBtn(m);
         }
 
         for (Mission m : game.getMissions()) {
             if (m == null) {
                 break;
             }
+
             addMission(m);
         }
+
         SwingUtilities.invokeLater(() -> {
             updateViewPanel();
         });
@@ -166,6 +168,8 @@ public class MtMGUI extends javax.swing.JFrame {
         game = saveManager.getGame();
         timer = new Timer(game.getTickRate(), new Updater());
 
+        updateOnLoad();
+
         minionPanel.addActionListener((ActionEvent e) -> {
             int minionID = Integer.parseInt(e.getActionCommand());
             updateMinionDisplay(minionID);
@@ -175,8 +179,6 @@ public class MtMGUI extends javax.swing.JFrame {
             int missionID = Integer.parseInt(e.getActionCommand());
             updateMissionDisplay(missionID);
         });
-
-        updateOnLoad();
 
         mScrollPane.getVerticalScrollBar().setUnitIncrement(16);
 
@@ -442,7 +444,7 @@ public class MtMGUI extends javax.swing.JFrame {
     }//GEN-LAST:event_fileExitActionPerformed
 
     private void debugAddMinionActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_debugAddMinionActionPerformed
-        addMinion();
+
     }//GEN-LAST:event_debugAddMinionActionPerformed
 
     private void missionActionButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_missionActionButtonActionPerformed
@@ -508,13 +510,8 @@ public class MtMGUI extends javax.swing.JFrame {
         //scrollToBottom(mScrollPane);
     }
 
-    private void addMinion() {
-        minionPanel.addMinionBtn(game.getMinionName(minionPanel.getNumMinions()));
-        updateViewPanel();
-    }
-
     private void addMission(Mission m) {
-        missionPanel.addMissionBtn(m.getType().toString(), m.getTimeRequired());
+        missionPanel.addMissionBtn(m);
         updateViewPanel();
     }
 

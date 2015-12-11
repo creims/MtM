@@ -67,4 +67,14 @@ public enum MissionType {
             default: return "MISSIONTYPE NOT IMPLEMENTED";
         }
     }
+    
+    public static MissionType stringToType(String s) {
+        for(MissionType type : MissionType.values()) {
+            if(type.name().equals(s.toUpperCase())) {
+                return type;
+            }
+        }
+        
+        return null;
+    }
 }

@@ -186,4 +186,10 @@ public class Mission {
                  "\nReward: "+ reward;
     }
 
+    public String saveString() {
+        return type.name() + "," + timeRequired + "," + completionRate + "," + currentTime + "," 
+                + active + "," + done + "," + primaryStat.getType().toString() + "," + primaryStat.getValue() 
+                + (secondaryStat == null ? "" : ("," + secondaryStat.getType().toString() + "," + secondaryStat.getValue()));
+    }
+
 }

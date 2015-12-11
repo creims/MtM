@@ -18,4 +18,14 @@ public enum StatType {
         }
     }
     
+    public static StatType stringToStat(String s) {
+        for(StatType stat : StatType.values()) {
+            if(stat.name().equals(s.toUpperCase())) {
+                return stat;
+            }
+        }
+        
+        return null;
+    }
+    
 }

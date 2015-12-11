@@ -124,11 +124,13 @@ public class Minion {
 
     @Override
     public String toString() {
-        return "Name: " + name + "\n\nPerception: " + perception + "\nTech: " + tech + "\nGathering: " + gathering + "\nFighting: " + fighting;
+        return "Name: " + name + "\n\nPerception: " + MtMUtil.round(perception, 2) 
+                + "\nTech: " + MtMUtil.round(tech, 2) + "\nGathering: " 
+                + MtMUtil.round(gathering, 2) + "\nFighting: " + MtMUtil.round(fighting, 2);
     }
 
     public String saveString() {
-        return name + "," + perception + "," + tech + "," + gathering + "," + fighting;
+        return name + "," + perception + "," + tech + "," + gathering + "," + fighting + "," + active;
     }
 
     /**

@@ -1,5 +1,7 @@
 package MtM.view.swingcomponents;
 
+import MtM.model.domain.Minion;
+
 /**
  *
  * @author Colin
@@ -8,14 +10,13 @@ public class MinionButton extends MButton {
 
     /**
      * Creates new form MinionButton
+     * @param m the associated minion
      */
-    public MinionButton() {
+    public MinionButton(Minion m) {
         super();
         initComponents();
-    }
-
-    public void setMinionName(String name) {
-        nameLabel.setText(name);
+        nameLabel.setText(m.getName());
+        setActive(m.isActive());
     }
 
     /**

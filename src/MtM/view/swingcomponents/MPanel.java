@@ -25,6 +25,7 @@ public class MPanel extends JPanel {
         initComponents();
         btnArray = new MButton[20];
         index = 0;
+        selected = 0;
         initialized = false;
     }
 
