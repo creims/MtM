@@ -65,7 +65,7 @@ public class MPanel extends JPanel {
         Arrays.fill(btnArray, null);
         index = 0;
     }
-    
+
     public void setSelection(int id) {
         btnArray[id].setSelected(true);
     }

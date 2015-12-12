@@ -13,23 +13,12 @@ import java.util.concurrent.ThreadLocalRandom;
  */
 public class Minion {
 
-    private static final double STAT_MIN = 1, STAT_MAX = 6;
-
     private String name;
     private Mission mission;
 
     private double perception, tech, gathering, fighting;
 
     private boolean active;
-
-    public Minion() {
-        this.name = randomName();
-        this.perception = DiceRandomizer.nextVal(STAT_MIN, STAT_MAX, 3);
-        this.tech = DiceRandomizer.nextVal(STAT_MIN, STAT_MAX, 3);
-        this.gathering = DiceRandomizer.nextVal(STAT_MIN, STAT_MAX, 3);
-        this.fighting = DiceRandomizer.nextVal(STAT_MIN, STAT_MAX, 3);
-        this.mission = null;
-    }
 
     public Minion(String name, double perception, double tech, double gathering, double fighting) {
         this.name = name;
@@ -116,10 +105,6 @@ public class Minion {
      */
     public void setPerception(double perception) {
         this.perception = perception;
-    }
-
-    private String randomName() {
-        return "Agent " + ThreadLocalRandom.current().nextInt(9000);
     }
 
     @Override

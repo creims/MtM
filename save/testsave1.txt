@@ -6,8 +6,8 @@
 One,1.0,1.0,1.0,1.0,true
 Two,2.0,2.0,2.0,2.0,true
 [MISSIONS]
-HACK,100,1,32,true,false,Tech,1.0
-SCOUT,100,1,23,true,false,Perception,1.0
+HACK,100,1,99,true,false,Tech,1.0
+SCOUT,100,1,90,true,false,Perception,1.0
 STAR_SIPHON,100,1,0,false,false,Tech,2.0672768598242808,Gathering,0.9327231401757192
 BOUNTY_HUNT,100,1,0,false,false,Fighting,2.95631562422006,Perception,0.04368437577993989
 SCOUT,100,1,0,false,false,Perception,1.0

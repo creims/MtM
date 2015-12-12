@@ -16,7 +16,7 @@ public class MButton extends JLayeredPane implements MouseListener {
 
     protected int btnID;
     protected boolean selected, active;
-    protected static Border borderHover;
+    protected static Border borderHover, borderDefault;
     protected MPanel mPanel;
     
     private static final Color COLOR_ACTIVE_SELECTED = new Color(200, 50, 250);
@@ -33,6 +33,8 @@ public class MButton extends JLayeredPane implements MouseListener {
         this.btnID = 0;
         this.addMouseListener(this);
         borderHover = BorderFactory.createLineBorder(Color.green);
+        borderDefault = BorderFactory.createLineBorder(Color.black);
+        this.setBorder(borderDefault);
         selected = false;
         active = false;
         this.dispatchEvent(new ActionEvent(this, ActionEvent.ACTION_FIRST, "paint"));
@@ -78,7 +80,7 @@ public class MButton extends JLayeredPane implements MouseListener {
 
     @Override
     public void mouseExited(MouseEvent e) {
-        this.setBorder(null);
+        this.setBorder(borderDefault);
     }
 
     protected void updateColor() {

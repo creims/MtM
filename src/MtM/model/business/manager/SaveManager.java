@@ -1,6 +1,7 @@
 package MtM.model.business.manager;
 
 import MtM.model.domain.Minion;
+import MtM.model.domain.MinionRosterEntry;
 import MtM.model.domain.Mission;
 import MtM.model.domain.MissionType;
 import MtM.model.domain.Stat;
@@ -147,6 +148,7 @@ public class SaveManager {
 
         loadMinions();
         loadMissions();
+        loadRoster();
         //currentGame.populateMissions();
 
         return true;
@@ -205,6 +207,13 @@ public class SaveManager {
             if (!currentGame.addMission(m)) {
                 return;
             }
+        }
+    }
+    
+    private static void loadRoster() {
+        currentGame.populateRoster();
+        for(MinionRosterEntry e : currentGame.getRoster()) {
+            System.out.println(e.getMinion().getName());
         }
     }
 

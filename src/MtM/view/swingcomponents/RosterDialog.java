@@ -5,18 +5,39 @@
  */
 package MtM.view.swingcomponents;
 
+import MtM.model.business.manager.Game;
+import MtM.model.business.manager.SaveManager;
+import MtM.model.domain.MinionRosterEntry;
+
 /**
  *
  * @author Colin
  */
 public class RosterDialog extends javax.swing.JDialog {
+    
+    SaveManager saveManager;
+    Game game;
 
     /**
      * Creates new form RosterDialog
+     *
+     * @param parent
+     * @param modal
      */
     public RosterDialog(java.awt.Frame parent, boolean modal) {
         super(parent, modal);
         initComponents();
+        
+        saveManager = new SaveManager();
+        game = saveManager.getGame();
+
+        updateRoster();
+    }
+
+    private void updateRoster() {
+        for(MinionRosterEntry e : game.getRoster()) {
+            freeAgentPanel.addRosterBtn(e);
+        }
     }
 
     /**
@@ -28,17 +49,52 @@ public class RosterDialog extends javax.swing.JDialog {
     // <editor-fold defaultstate="collapsed" desc="Generated Code">//GEN-BEGIN:initComponents
     private void initComponents() {
 
+        freeAgentScrollPane = new javax.swing.JScrollPane();
+        freeAgentPanel = new MtM.view.swingcomponents.RosterPanel();
+        yourMinionsScrollPane = new javax.swing.JScrollPane();
+        yourMinionsPanel = new MtM.view.swingcomponents.RosterPanel();
+
         setDefaultCloseOperation(javax.swing.WindowConstants.DISPOSE_ON_CLOSE);
+
+        freeAgentScrollPane.setHorizontalScrollBarPolicy(javax.swing.ScrollPaneConstants.HORIZONTAL_SCROLLBAR_NEVER);
+        freeAgentScrollPane.setPreferredSize(new java.awt.Dimension(320, 600));
+
+        freeAgentPanel.setMinimumSize(new java.awt.Dimension(400, 600));
+        freeAgentPanel.setPreferredSize(new java.awt.Dimension(300, 600));
+        java.awt.FlowLayout flowLayout1 = new java.awt.FlowLayout(java.awt.FlowLayout.CENTER, 10, 10);
+        flowLayout1.setAlignOnBaseline(true);
+        freeAgentPanel.setLayout(flowLayout1);
+        freeAgentScrollPane.setViewportView(freeAgentPanel);
+
+        yourMinionsScrollPane.setHorizontalScrollBarPolicy(javax.swing.ScrollPaneConstants.HORIZONTAL_SCROLLBAR_NEVER);
+        yourMinionsScrollPane.setPreferredSize(new java.awt.Dimension(320, 600));
+
+        yourMinionsPanel.setMinimumSize(new java.awt.Dimension(400, 600));
+        yourMinionsPanel.setPreferredSize(new java.awt.Dimension(300, 600));
+        java.awt.FlowLayout flowLayout2 = new java.awt.FlowLayout(java.awt.FlowLayout.CENTER, 10, 10);
+        flowLayout2.setAlignOnBaseline(true);
+        yourMinionsPanel.setLayout(flowLayout2);
+        yourMinionsScrollPane.setViewportView(yourMinionsPanel);
 
         javax.swing.GroupLayout layout = new javax.swing.GroupLayout(getContentPane());
         getContentPane().setLayout(layout);
         layout.setHorizontalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGap(0, 400, Short.MAX_VALUE)
+            .addGroup(layout.createSequentialGroup()
+                .addContainerGap()
+                .addComponent(yourMinionsScrollPane, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addGap(18, 18, 18)
+                .addComponent(freeAgentScrollPane, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
         );
         layout.setVerticalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGap(0, 300, Short.MAX_VALUE)
+            .addGroup(layout.createSequentialGroup()
+                .addContainerGap()
+                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
+                    .addComponent(yourMinionsScrollPane, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addComponent(freeAgentScrollPane, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
+                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
         );
 
         pack();
@@ -87,5 +143,10 @@ public class RosterDialog extends javax.swing.JDialog {
     }
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
+    private MtM.view.swingcomponents.RosterPanel freeAgentPanel;
+    private javax.swing.JScrollPane freeAgentScrollPane;
+    private MtM.view.swingcomponents.RosterPanel yourMinionsPanel;
+    private javax.swing.JScrollPane yourMinionsScrollPane;
     // End of variables declaration//GEN-END:variables
+
 }

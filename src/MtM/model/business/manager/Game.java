@@ -1,7 +1,9 @@
 package MtM.model.business.manager;
 
+import MtM.model.business.service.MinionGenerator;
 import MtM.model.business.service.MissionGenerator;
 import MtM.model.domain.Minion;
+import MtM.model.domain.MinionRosterEntry;
 import MtM.model.domain.Mission;
 import java.util.ArrayList;
 import java.util.Collections;
@@ -15,6 +17,7 @@ import java.util.Properties;
 public class Game {
 
     private final static int MISSION_AVAILABLE_TARGET = 6;
+    private final static int ROSTER_TARGET = 10;
 
     private final int maxMinions, maxMissions;
     private int tickRate, numActiveMissions;
@@ -22,6 +25,7 @@ public class Game {
 
     private final ArrayList<Minion> minions;
     private final ArrayList<Mission> missions;
+    private final ArrayList<MinionRosterEntry> roster;
 
     private long catnip;
 
@@ -33,6 +37,7 @@ public class Game {
 
         minions = new ArrayList();
         missions = new ArrayList();
+        roster = new ArrayList();
 
         numActiveMissions = 0;
         difficulty = 1;
@@ -123,6 +128,10 @@ public class Game {
         return (Mission[]) missions.toArray(new Mission[1]);
     }
 
+    public MinionRosterEntry[] getRoster() {
+        return (MinionRosterEntry[]) roster.toArray(new MinionRosterEntry[1]);
+    }
+
     public int getMaxMinions() {
         return maxMinions;
     }
@@ -131,11 +140,16 @@ public class Game {
         return maxMissions;
     }
 
-    void populateMissions() {
+    public void populateMissions() {
         while (missions.size() - numActiveMissions < MISSION_AVAILABLE_TARGET) {
             addMission(MissionGenerator.generateMission(difficulty));
         }
-        System.out.println("");
+    }
+
+    public void populateRoster() {
+        while (roster.size() < ROSTER_TARGET) {
+            roster.add(new MinionRosterEntry(MinionGenerator.generateMinion()));
+        }
     }
 
     public Mission getMission(int i) {
