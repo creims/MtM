@@ -12,23 +12,24 @@ public class RosterButton extends MButton {
 
     private int cost;
     private Minion minion;
+    private boolean owned;
 
     /**
      * Creates new form RosterButton
      *
      * @param e
      */
-    public RosterButton(MinionRosterEntry e) {
+    public RosterButton(MinionRosterEntry e, boolean owned) {
         super();
         initComponents();
         minion = e.getMinion();
         cost = e.getCost();
+        setOwned(owned);
 
-        statNumDisplayArea.setText("" + MtMUtil.round(minion.getGathering(), 2) 
-                + '\n' + MtMUtil.round(minion.getPerception(), 2) 
-                + '\n' + MtMUtil.round(minion.getFighting(), 2) + '\n' 
+        statNumDisplayArea.setText("" + MtMUtil.round(minion.getGathering(), 2)
+                + '\n' + MtMUtil.round(minion.getPerception(), 2)
+                + '\n' + MtMUtil.round(minion.getFighting(), 2) + '\n'
                 + MtMUtil.round(minion.getTech(), 2));
-        costLabel.setText("Cost: " + cost);
         nameLabel.setText(minion.getName());
     }
 
@@ -48,6 +49,15 @@ public class RosterButton extends MButton {
      */
     public void setCost(int cost) {
         this.cost = cost;
+    }
+
+    private void setOwned(boolean owned) {
+        this.owned = owned;
+        if (owned) {
+            costLabel.setText(minion.isActive() ? "On Mission" : "Available");
+        } else {
+            costLabel.setText("Cost: " + cost);
+        }
     }
 
     /**
@@ -168,4 +178,5 @@ public class RosterButton extends MButton {
     private javax.swing.JTextArea statNumDisplayArea;
     private javax.swing.JTextArea statTextArea;
     // End of variables declaration//GEN-END:variables
+
 }

@@ -3,7 +3,7 @@
 <Form version="1.2" maxVersion="1.9">
   <Properties>
     <Property name="background" type="java.awt.Color" editor="org.netbeans.beaninfo.editors.ColorEditor">
-      <Color blue="ff" green="ff" red="0" type="rgb"/>
+      <Color blue="80" green="80" id="gray" palette="1" red="80" type="palette"/>
     </Property>
     <Property name="cursor" type="java.awt.Cursor" editor="org.netbeans.modules.form.editors2.CursorEditor">
       <Color id="Default Cursor"/>

@@ -1,7 +1,6 @@
 package MtM.model.business.manager;
 
 import MtM.model.domain.Minion;
-import MtM.model.domain.MinionRosterEntry;
 import MtM.model.domain.Mission;
 import MtM.model.domain.MissionType;
 import MtM.model.domain.Stat;
@@ -73,6 +72,12 @@ public class SaveManager {
         } catch (IOException ex) {
             Logger.getLogger(Game.class.getName()).log(Level.SEVERE, null, ex);
         }
+    }
+    
+    public void newGame() {
+        currentGame = new Game(p);
+        currentGame.populateRoster();
+        currentGame.populateMissions();
     }
 
     /**
@@ -212,9 +217,6 @@ public class SaveManager {
     
     private static void loadRoster() {
         currentGame.populateRoster();
-        for(MinionRosterEntry e : currentGame.getRoster()) {
-            System.out.println(e.getMinion().getName());
-        }
     }
 
     public String getSaveFile() {

@@ -12,15 +12,14 @@ public class RosterPanel extends MPanel {
         super();
     }
 
-    public void addRosterBtn(MinionRosterEntry m) {
-        RosterButton newBtn = new RosterButton(m);
+    public void addRosterBtn(MinionRosterEntry m, boolean owned) {
+        RosterButton newBtn = new RosterButton(m, owned);
         int size = getWidth();
         newBtn.setPreferredSize(new Dimension(size - 10, size / 2 - 20));
         newBtn.setBtnID(index);
         btnArray[index++] = newBtn;
         add(newBtn);
         newBtn.setMPanel(this);
-        newBtn.processPress();
     }
 
     /**

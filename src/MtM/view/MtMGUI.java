@@ -4,6 +4,7 @@ import MtM.model.business.manager.Game;
 import MtM.model.business.manager.SaveManager;
 import MtM.model.domain.Minion;
 import MtM.model.domain.Mission;
+import MtM.view.swingcomponents.RosterDialog;
 import java.awt.Dimension;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
@@ -11,8 +12,6 @@ import java.awt.event.WindowEvent;
 import java.io.File;
 import javax.swing.JFileChooser;
 import javax.swing.JOptionPane;
-import javax.swing.JScrollBar;
-import javax.swing.JScrollPane;
 import javax.swing.SwingUtilities;
 import javax.swing.Timer;
 
@@ -24,7 +23,7 @@ public class MtMGUI extends javax.swing.JFrame {
 
     private final Timer timer;
     private final SaveManager saveManager;
-    private final Game game;
+    private Game game;
 
     /**
      * should be called after a game is loaded to update things
@@ -41,6 +40,7 @@ public class MtMGUI extends javax.swing.JFrame {
             minionPanel.addMinionBtn(m);
         }
 
+        missionPanel.clear();
         for (Mission m : game.getMissions()) {
             if (m == null) {
                 break;
@@ -102,13 +102,6 @@ public class MtMGUI extends javax.swing.JFrame {
                 saveManager.saveProps();
                 System.exit(0);
             }
-        });
-    }
-
-    private void scrollToBottom(JScrollPane scrollPane) {
-        SwingUtilities.invokeLater(() -> {
-            JScrollBar vertical = scrollPane.getVerticalScrollBar();
-            vertical.setValue(vertical.getMaximum());
         });
     }
 
@@ -183,12 +176,14 @@ public class MtMGUI extends javax.swing.JFrame {
         mScrollPane.getVerticalScrollBar().setUnitIncrement(16);
 
         timer.start();
+
+        minionPanel.pressLast();
+        missionPanel.pressLast();
     }
 
     public void updateMinionDisplay(int minionID) {
         if (minionPanel.getSelected() != missionPanel.getSelected() && minionPanel.getActive(minionPanel.getSelected())) {
             missionPanel.processSelection(minionID);
-            missionPanel.setSelection(minionID);
         }
 
         minionDisplay.setText(game.printMinion(minionID));
@@ -199,7 +194,6 @@ public class MtMGUI extends javax.swing.JFrame {
     public void updateMissionDisplay(int missionID) {
         if (minionPanel.getSelected() != missionPanel.getSelected() && missionPanel.getActive(missionPanel.getSelected())) {
             minionPanel.processSelection(missionID);
-            minionPanel.setSelection(missionID);
         }
 
         missionDisplay.setText(game.printMission(missionID));
@@ -232,15 +226,18 @@ public class MtMGUI extends javax.swing.JFrame {
         missionActionButton = new javax.swing.JButton();
         menuBar = new javax.swing.JMenuBar();
         fileMenu = new javax.swing.JMenu();
+        fileNewGame = new javax.swing.JMenuItem();
         fileSave = new javax.swing.JMenuItem();
         fileSaveAs = new javax.swing.JMenuItem();
         fileOpen = new javax.swing.JMenuItem();
         fileExit = new javax.swing.JMenuItem();
         debugMenu = new javax.swing.JMenu();
         debugSetTickRate = new javax.swing.JMenuItem();
-        debugAddMinion = new javax.swing.JMenuItem();
+        debugSetDifficulty = new javax.swing.JMenuItem();
+        debugRandomizeFreeAgents = new javax.swing.JMenuItem();
 
         setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
+        setTitle("Manage the Minions");
         setBackground(new java.awt.Color(102, 153, 255));
         setResizable(false);
 
@@ -294,6 +291,11 @@ public class MtMGUI extends javax.swing.JFrame {
         labelCatnipNum.setText("##########");
 
         rosterButton.setText("Roster");
+        rosterButton.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                rosterButtonActionPerformed(evt);
+            }
+        });
 
         missionActionButton.setFont(missionActionButton.getFont().deriveFont(missionActionButton.getFont().getStyle() | java.awt.Font.BOLD, missionActionButton.getFont().getSize()+14));
         missionActionButton.setText("Assign");
@@ -304,6 +306,14 @@ public class MtMGUI extends javax.swing.JFrame {
         });
 
         fileMenu.setText("File");
+
+        fileNewGame.setText("New Game");
+        fileNewGame.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                fileNewGameActionPerformed(evt);
+            }
+        });
+        fileMenu.add(fileNewGame);
 
         fileSave.setAccelerator(javax.swing.KeyStroke.getKeyStroke(java.awt.event.KeyEvent.VK_S, java.awt.event.InputEvent.CTRL_MASK));
         fileSave.setText("Save");
@@ -351,14 +361,21 @@ public class MtMGUI extends javax.swing.JFrame {
         });
         debugMenu.add(debugSetTickRate);
 
-        debugAddMinion.setAccelerator(javax.swing.KeyStroke.getKeyStroke(java.awt.event.KeyEvent.VK_M, java.awt.event.InputEvent.CTRL_MASK));
-        debugAddMinion.setText("Add Minion");
-        debugAddMinion.addActionListener(new java.awt.event.ActionListener() {
+        debugSetDifficulty.setText("Set Difficulty");
+        debugSetDifficulty.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
-                debugAddMinionActionPerformed(evt);
+                debugSetDifficultyActionPerformed(evt);
             }
         });
-        debugMenu.add(debugAddMinion);
+        debugMenu.add(debugSetDifficulty);
+
+        debugRandomizeFreeAgents.setText("Randomize Free Agents");
+        debugRandomizeFreeAgents.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                debugRandomizeFreeAgentsActionPerformed(evt);
+            }
+        });
+        debugMenu.add(debugRandomizeFreeAgents);
 
         menuBar.add(debugMenu);
 
@@ -433,6 +450,7 @@ public class MtMGUI extends javax.swing.JFrame {
         int newTickRate = Integer.parseInt(JOptionPane.showInputDialog(this, "New tick rate:"));
         timer.setDelay(newTickRate);
         timer.restart();
+        log("Tick rate set to " + newTickRate);
     }//GEN-LAST:event_debugSetTickRateActionPerformed
 
     private void fileOpenActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_fileOpenActionPerformed
@@ -443,9 +461,11 @@ public class MtMGUI extends javax.swing.JFrame {
         this.dispose();
     }//GEN-LAST:event_fileExitActionPerformed
 
-    private void debugAddMinionActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_debugAddMinionActionPerformed
-
-    }//GEN-LAST:event_debugAddMinionActionPerformed
+    private void debugSetDifficultyActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_debugSetDifficultyActionPerformed
+        double newDifficulty = Double.parseDouble(JOptionPane.showInputDialog(this, "Current Dificulty: " + game.getDifficulty() + "\nNew difficulty: "));
+        game.setDifficulty(newDifficulty);
+        log("Difficulty set to " + newDifficulty);
+    }//GEN-LAST:event_debugSetDifficultyActionPerformed
 
     private void missionActionButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_missionActionButtonActionPerformed
         if (missionActionButton.getText().equals("Assign")) {
@@ -454,6 +474,33 @@ public class MtMGUI extends javax.swing.JFrame {
             completeMission();
         }
     }//GEN-LAST:event_missionActionButtonActionPerformed
+
+    private void rosterButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_rosterButtonActionPerformed
+        RosterDialog roster = new RosterDialog(this, true, game);
+        roster.setVisible(true);
+        roster.addWindowListener(new java.awt.event.WindowAdapter() {
+            @Override
+            public void windowClosed(WindowEvent winEvt) {
+                updateOnLoad();
+                minionPanel.pressLast();
+                missionPanel.pressLast();
+            }
+        });
+
+    }//GEN-LAST:event_rosterButtonActionPerformed
+
+    private void fileNewGameActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_fileNewGameActionPerformed
+        fileSaveActionPerformed(null);
+        saveManager.newGame();
+        game = saveManager.getGame();
+        updateOnLoad();
+    }//GEN-LAST:event_fileNewGameActionPerformed
+
+    private void debugRandomizeFreeAgentsActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_debugRandomizeFreeAgentsActionPerformed
+        game.clearRoster();
+        game.populateRoster();
+        log("Roster randomized.");
+    }//GEN-LAST:event_debugRandomizeFreeAgentsActionPerformed
 
     private void beginMission() {
         int minionID = minionPanel.getSelected();
@@ -505,8 +552,8 @@ public class MtMGUI extends javax.swing.JFrame {
     private void updateViewPanel() {
         int newHeight = Math.max(minionPanel.getHeight(), missionPanel.getHeight());
         mViewPanel.setPreferredSize(new Dimension(mViewPanel.getWidth(), newHeight));
-        mViewPanel.revalidate();
-        mViewPanel.repaint();
+        revalidate();
+        repaint();
         //scrollToBottom(mScrollPane);
     }
 
@@ -546,11 +593,13 @@ public class MtMGUI extends javax.swing.JFrame {
     }
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
-    private javax.swing.JMenuItem debugAddMinion;
     private javax.swing.JMenu debugMenu;
+    private javax.swing.JMenuItem debugRandomizeFreeAgents;
+    private javax.swing.JMenuItem debugSetDifficulty;
     private javax.swing.JMenuItem debugSetTickRate;
     private javax.swing.JMenuItem fileExit;
     private javax.swing.JMenu fileMenu;
+    private javax.swing.JMenuItem fileNewGame;
     private javax.swing.JMenuItem fileOpen;
     private javax.swing.JMenuItem fileSave;
     private javax.swing.JMenuItem fileSaveAs;

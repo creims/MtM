@@ -7,14 +7,19 @@ package MtM.view.swingcomponents;
 
 import MtM.model.business.manager.Game;
 import MtM.model.business.manager.SaveManager;
+import MtM.model.domain.Minion;
 import MtM.model.domain.MinionRosterEntry;
+import java.awt.Rectangle;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
+import javax.swing.SwingUtilities;
 
 /**
  *
  * @author Colin
  */
 public class RosterDialog extends javax.swing.JDialog {
-    
+
     SaveManager saveManager;
     Game game;
 
@@ -24,19 +29,66 @@ public class RosterDialog extends javax.swing.JDialog {
      * @param parent
      * @param modal
      */
-    public RosterDialog(java.awt.Frame parent, boolean modal) {
+    public RosterDialog(java.awt.Frame parent, boolean modal, Game game) {
         super(parent, modal);
         initComponents();
-        
-        saveManager = new SaveManager();
-        game = saveManager.getGame();
-
+        this.game = game;
         updateRoster();
+
+        freeAgentPanel.addActionListener((ActionEvent e) -> {
+            int minionID = Integer.parseInt(e.getActionCommand());
+
+            if (game.minionsFull()) {
+                hireButton.setText("Roster Full");
+                hireButton.setEnabled(false);
+            } else if (!game.canAfford(minionID)) {
+                hireButton.setText("Not Enough Catnip");
+                hireButton.setEnabled(false);
+            } else {
+                hireButton.setText("Hire");
+                hireButton.setEnabled(true);
+            }
+
+        });
+
+        yourMinionsPanel.addActionListener((ActionEvent e) -> {
+            int minionID = Integer.parseInt(e.getActionCommand());
+
+            if (game.getMinionActive(minionID)) {
+                fireButton.setText("Minion Busy");
+                fireButton.setEnabled(false);
+            } else {
+                fireButton.setText("Fire");
+                fireButton.setEnabled(true);
+            }
+
+        });
+
+        freeAgentPanel.pressLast();
+        yourMinionsPanel.pressLast();
+
+        SwingUtilities.invokeLater(new Runnable() {
+            @Override
+            public void run() {
+                freeAgentScrollPane.getVerticalScrollBar().setValue(0);
+                yourMinionsScrollPane.getVerticalScrollBar().setValue(0);
+                repaint();
+            }
+        });
     }
 
     private void updateRoster() {
-        for(MinionRosterEntry e : game.getRoster()) {
-            freeAgentPanel.addRosterBtn(e);
+        freeAgentPanel.clear();
+        for (MinionRosterEntry e : game.getRoster()) {
+            freeAgentPanel.addRosterBtn(e, false);
+        }
+
+        yourMinionsPanel.clear();
+        for (Minion m : game.getMinions()) {
+            if (m == null) {
+                continue;
+            }
+            yourMinionsPanel.addRosterBtn(new MinionRosterEntry(m), true);
         }
     }
 
@@ -53,28 +105,47 @@ public class RosterDialog extends javax.swing.JDialog {
         freeAgentPanel = new MtM.view.swingcomponents.RosterPanel();
         yourMinionsScrollPane = new javax.swing.JScrollPane();
         yourMinionsPanel = new MtM.view.swingcomponents.RosterPanel();
+        fireButton = new javax.swing.JButton();
+        hireButton = new javax.swing.JButton();
 
         setDefaultCloseOperation(javax.swing.WindowConstants.DISPOSE_ON_CLOSE);
+        setTitle("Manage the Minions - Roster");
 
         freeAgentScrollPane.setHorizontalScrollBarPolicy(javax.swing.ScrollPaneConstants.HORIZONTAL_SCROLLBAR_NEVER);
         freeAgentScrollPane.setPreferredSize(new java.awt.Dimension(320, 600));
 
-        freeAgentPanel.setMinimumSize(new java.awt.Dimension(400, 600));
-        freeAgentPanel.setPreferredSize(new java.awt.Dimension(300, 600));
+        freeAgentPanel.setMinimumSize(new java.awt.Dimension(400, 500));
+        freeAgentPanel.setPreferredSize(new java.awt.Dimension(300, 500));
         java.awt.FlowLayout flowLayout1 = new java.awt.FlowLayout(java.awt.FlowLayout.CENTER, 10, 10);
         flowLayout1.setAlignOnBaseline(true);
         freeAgentPanel.setLayout(flowLayout1);
         freeAgentScrollPane.setViewportView(freeAgentPanel);
 
         yourMinionsScrollPane.setHorizontalScrollBarPolicy(javax.swing.ScrollPaneConstants.HORIZONTAL_SCROLLBAR_NEVER);
-        yourMinionsScrollPane.setPreferredSize(new java.awt.Dimension(320, 600));
+        yourMinionsScrollPane.setPreferredSize(new java.awt.Dimension(320, 500));
 
-        yourMinionsPanel.setMinimumSize(new java.awt.Dimension(400, 600));
-        yourMinionsPanel.setPreferredSize(new java.awt.Dimension(300, 600));
+        yourMinionsPanel.setMinimumSize(new java.awt.Dimension(400, 500));
+        yourMinionsPanel.setPreferredSize(new java.awt.Dimension(300, 500));
         java.awt.FlowLayout flowLayout2 = new java.awt.FlowLayout(java.awt.FlowLayout.CENTER, 10, 10);
         flowLayout2.setAlignOnBaseline(true);
         yourMinionsPanel.setLayout(flowLayout2);
         yourMinionsScrollPane.setViewportView(yourMinionsPanel);
+
+        fireButton.setFont(fireButton.getFont().deriveFont(fireButton.getFont().getStyle() | java.awt.Font.BOLD, fireButton.getFont().getSize()+15));
+        fireButton.setText("Fire");
+        fireButton.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                fireButtonActionPerformed(evt);
+            }
+        });
+
+        hireButton.setFont(hireButton.getFont().deriveFont(hireButton.getFont().getStyle() | java.awt.Font.BOLD, hireButton.getFont().getSize()+15));
+        hireButton.setText("Hire");
+        hireButton.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                hireButtonActionPerformed(evt);
+            }
+        });
 
         javax.swing.GroupLayout layout = new javax.swing.GroupLayout(getContentPane());
         getContentPane().setLayout(layout);
@@ -82,69 +153,58 @@ public class RosterDialog extends javax.swing.JDialog {
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(layout.createSequentialGroup()
                 .addContainerGap()
-                .addComponent(yourMinionsScrollPane, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addGap(18, 18, 18)
-                .addComponent(freeAgentScrollPane, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                    .addComponent(yourMinionsScrollPane, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addComponent(fireButton, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                    .addGroup(layout.createSequentialGroup()
+                        .addComponent(freeAgentScrollPane, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                        .addGap(0, 0, Short.MAX_VALUE))
+                    .addComponent(hireButton, javax.swing.GroupLayout.Alignment.TRAILING, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+                .addContainerGap())
         );
         layout.setVerticalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(layout.createSequentialGroup()
                 .addContainerGap()
-                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
-                    .addComponent(yourMinionsScrollPane, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                    .addComponent(freeAgentScrollPane, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
-                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
+                    .addComponent(yourMinionsScrollPane, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                    .addComponent(freeAgentScrollPane, javax.swing.GroupLayout.PREFERRED_SIZE, 0, Short.MAX_VALUE))
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                    .addComponent(hireButton, javax.swing.GroupLayout.DEFAULT_SIZE, 94, Short.MAX_VALUE)
+                    .addComponent(fireButton, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+                .addContainerGap())
         );
 
         pack();
     }// </editor-fold>//GEN-END:initComponents
 
-    /**
-     * @param args the command line arguments
-     */
-    public static void main(String args[]) {
-        /* Set the Nimbus look and feel */
-        //<editor-fold defaultstate="collapsed" desc=" Look and feel setting code (optional) ">
-        /* If Nimbus (introduced in Java SE 6) is not available, stay with the default look and feel.
-         * For details see http://download.oracle.com/javase/tutorial/uiswing/lookandfeel/plaf.html 
-         */
-        try {
-            for (javax.swing.UIManager.LookAndFeelInfo info : javax.swing.UIManager.getInstalledLookAndFeels()) {
-                if ("Nimbus".equals(info.getName())) {
-                    javax.swing.UIManager.setLookAndFeel(info.getClassName());
-                    break;
-                }
-            }
-        } catch (ClassNotFoundException ex) {
-            java.util.logging.Logger.getLogger(RosterDialog.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
-        } catch (InstantiationException ex) {
-            java.util.logging.Logger.getLogger(RosterDialog.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
-        } catch (IllegalAccessException ex) {
-            java.util.logging.Logger.getLogger(RosterDialog.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
-        } catch (javax.swing.UnsupportedLookAndFeelException ex) {
-            java.util.logging.Logger.getLogger(RosterDialog.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
-        }
-        //</editor-fold>
+    private void fireButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_fireButtonActionPerformed
+        game.fireMinion(yourMinionsPanel.getSelected());
+        yourMinionsPanel.setSelected(0);
+        freeAgentPanel.pressLast();
+        updateRoster();
+        revalidate();
+        repaint();
+    }//GEN-LAST:event_fireButtonActionPerformed
 
-        /* Create and display the dialog */
-        java.awt.EventQueue.invokeLater(new Runnable() {
-            public void run() {
-                RosterDialog dialog = new RosterDialog(new javax.swing.JFrame(), true);
-                dialog.addWindowListener(new java.awt.event.WindowAdapter() {
-                    @Override
-                    public void windowClosing(java.awt.event.WindowEvent e) {
-                        System.exit(0);
-                    }
-                });
-                dialog.setVisible(true);
-            }
-        });
-    }
+    private void hireButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_hireButtonActionPerformed
+        game.hireMinion(freeAgentPanel.getSelected());
+        freeAgentPanel.setSelected(0);
+        freeAgentPanel.pressLast();
+        updateRoster();
+        revalidate();
+        repaint();
+    }//GEN-LAST:event_hireButtonActionPerformed
+
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
+    private javax.swing.JButton fireButton;
     private MtM.view.swingcomponents.RosterPanel freeAgentPanel;
     private javax.swing.JScrollPane freeAgentScrollPane;
+    private javax.swing.JButton hireButton;
     private MtM.view.swingcomponents.RosterPanel yourMinionsPanel;
     private javax.swing.JScrollPane yourMinionsScrollPane;
     // End of variables declaration//GEN-END:variables

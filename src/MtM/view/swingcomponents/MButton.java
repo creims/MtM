@@ -49,7 +49,7 @@ public class MButton extends JLayeredPane implements MouseListener {
     // <editor-fold defaultstate="collapsed" desc="Generated Code">//GEN-BEGIN:initComponents
     private void initComponents() {
 
-        setBackground(new java.awt.Color(0, 255, 255));
+        setBackground(java.awt.Color.gray);
         setCursor(new java.awt.Cursor(java.awt.Cursor.DEFAULT_CURSOR));
         setMaximumSize(new java.awt.Dimension(10000, 100000));
         setMinimumSize(new java.awt.Dimension(50, 50));

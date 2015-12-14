@@ -16,9 +16,9 @@ public class MissionButton extends MButton {
 
     public MissionButton(Mission m) {
         super();
-        initComponents();
         this.maxTime = m.getTimeRequired();
         this.currentTime = m.getCurrentTime();
+        initComponents();
         statusPanelLayout = (CardLayout) statusPanel.getLayout();
         setActive(m.isActive());
         typeLabel.setText(m.getType().toString());
@@ -88,6 +88,7 @@ public class MissionButton extends MButton {
         statusPanel.add(availableLabel, "available");
 
         progressBar.setToolTipText("");
+        progressBar.setValue(toPercent(currentTime, maxTime));
         progressBar.setMaximumSize(new java.awt.Dimension(80, 40));
         progressBar.setMinimumSize(new java.awt.Dimension(80, 20));
         progressBar.setOpaque(true);

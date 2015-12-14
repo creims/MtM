@@ -222,4 +222,33 @@ public class Game {
         this.difficulty = difficulty;
     }
 
+    public void fireMinion(int i) {
+        roster.add(new MinionRosterEntry(minions.remove(i)));
+    }
+
+    public void hireMinion(int i) {
+        MinionRosterEntry newMinion = roster.remove(i);
+        minions.add(newMinion.getMinion());
+        catnip -= newMinion.getCost();
+    }
+
+    public boolean minionsFull() {
+        if (minions.size() >= maxMinions) {
+            return true;
+        }
+        return false;
+    }
+
+    public boolean canAfford(int minionID) {
+        if(catnip >= roster.get(minionID).getCost()) {
+            return true;
+        }
+        
+        return false;
+    }
+
+    public void clearRoster() {
+        roster.clear();
+    }
+
 }

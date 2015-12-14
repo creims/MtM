@@ -20,7 +20,6 @@ public class MinionPanel extends MPanel {
         btnArray[index++] = newBtn;
         add(newBtn);
         newBtn.setMPanel(this);
-        newBtn.processPress();
     }
 
     /**

@@ -48,7 +48,7 @@ public class MissionGenerator {
         ret = new Mission(type, 100, 1);
         ret.setPrimaryStat(primaryStat);
         ret.setSecondaryStat(secondaryStat);
-        ret.setReward(144 * difficulty * difficulty);
+        ret.setReward((int)(144.0 * difficulty * difficulty));
 
         return ret;
     }

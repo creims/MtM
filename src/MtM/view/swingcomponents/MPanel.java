@@ -1,10 +1,8 @@
 package MtM.view.swingcomponents;
 
 import java.awt.Dimension;
-import java.awt.Point;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
-import java.util.Arrays;
 import javax.swing.JPanel;
 
 /**
@@ -44,7 +42,6 @@ public class MPanel extends JPanel {
         add(newBtn);
         revalidate();
         newBtn.setMPanel(this);
-        newBtn.processPress();
     }
 
     @Override
@@ -62,21 +59,38 @@ public class MPanel extends JPanel {
     }
 
     public void clear() {
-        Arrays.fill(btnArray, null);
+        for (MButton m : btnArray) {
+            if (m == null) {
+                break;
+            }
+            remove(m);
+        }
         index = 0;
     }
 
-    public void setSelection(int id) {
-        btnArray[id].setSelected(true);
+    public void setSelected(int id) {
+        selected = id;
+    }
+
+    public void pressLast() {
+        if (btnArray[selected] == null) {
+            return;
+        }
+        btnArray[selected].setSelected(true);
+        processSelection(selected);
     }
 
     public void processSelection(int id) {
         selected = id;
         for (int i = 0; i < index; i++) {
-            if (btnArray[i] == null || i == selected) {
+            if (btnArray[i] == null) {
                 continue;
             }
-            btnArray[i].setSelected(false);
+            if (i == id) {
+                btnArray[i].setSelected(true);
+            } else {
+                btnArray[i].setSelected(false);
+            }
         }
 
         fireActionEvent(new ActionEvent(this, ActionEvent.ACTION_FIRST, "" + id));

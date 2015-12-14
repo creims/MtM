@@ -21,7 +21,6 @@ public class MissionPanel extends MPanel {
         btnArray[index++] = newBtn;
         add(newBtn);
         newBtn.setMPanel(this);
-        newBtn.processPress();
     }
     
     public void completeMission(int index, String newType, int newMaxTime) {
